@@ -3,11 +3,12 @@
 // this code is public domain, enjoy!
 
 
-#include <avr/io.h>
+//#include <avr/io.h>
 #include "Arduino.h"
 #include "MSMotorShield.h"
 
-static uint8_t latch_state;
+typedef unsigned long int uint32_t;
+static uint32_t latch_state;
 
 #define MICROSTEPS 16  // 8, 16 & 32 are popular
 
@@ -39,7 +40,7 @@ void MSMotorController::enable(void) {
 
 
 void MSMotorController::latch_tx(void) {
-  uint8_t i;
+	uint32_t i;
 
   //LATCH_PORT &= ~_BV(LATCH);
   digitalWrite(MOTORLATCH, LOW);
@@ -215,7 +216,7 @@ inline void setPWM4(uint8_t s) {
 #endif
 }
 
-MS_DCMotor::MS_DCMotor(uint8_t num, uint8_t freq) {
+MS_DCMotor::MS_DCMotor(uint32_t num, uint32_t freq) {
   motornum = num;
   pwmfreq = freq;
 
@@ -245,8 +246,8 @@ MS_DCMotor::MS_DCMotor(uint8_t num, uint8_t freq) {
   }
 }
 
-void MS_DCMotor::run(uint8_t cmd) {
-  uint8_t a, b;
+void MS_DCMotor::run(uint32_t cmd) {
+  uint32_t a, b;
   switch (motornum) {
   case 1:
     a = MOTOR1_A; b = MOTOR1_B; break;
@@ -295,8 +296,8 @@ void MS_DCMotor::setSpeed(uint8_t speed) {
 /******************************************
                STEPPERS
 ******************************************/
-
-MS_Stepper::MS_Stepper(uint16_t steps, uint8_t num) {
+/*
+MS_Stepper::MS_Stepper(uint32_t steps, uint32_t num) {
   MC.enable();
 
   revsteps = steps;
@@ -343,7 +344,7 @@ MS_Stepper::MS_Stepper(uint16_t steps, uint8_t num) {
   }
 }
 
-void MS_Stepper::setSpeed(uint16_t rpm) {
+void MS_Stepper::setSpeed(uint32_t rpm) {
   usperstep = 60000000 / (revsteps * rpm);
   steppingcounter = 0;
 }
@@ -360,9 +361,9 @@ void MS_Stepper::release(void) {
   }
 }
 
-void MS_Stepper::step(uint16_t steps, uint8_t dir,  uint8_t style) {
+void MS_Stepper::step(uint32_t steps, uint32_t dir,  uint32_t style) {
   uint32_t uspers = usperstep;
-  uint8_t ret = 0;
+  uint32_t ret = 0;
 
   if (style == INTERLEAVE) {
     uspers /= 2;
@@ -703,5 +704,5 @@ uint8_t MS_Stepper::onestep(uint8_t dir, uint8_t style) {
   }
   MC.latch_tx();
   return mstep;
-}
+}*/
 
