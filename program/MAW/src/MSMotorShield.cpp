@@ -3,8 +3,9 @@
 // this code is public domain, enjoy!
 
 
-#include <avr/io.h>
-#include "Arduino.h"
+//#include <avr/io.h>
+//#include "Arduino.h"
+
 #include "MSMotorShield.h"
 
 static uint8_t latch_state;
@@ -24,17 +25,23 @@ void MSMotorController::enable(void) {
   CLK_DDR |= _BV(CLK);
   SER_DDR |= _BV(SER);
   */
-  pinMode(MOTORLATCH, OUTPUT);
-  pinMode(MOTORENABLE, OUTPUT);
-  pinMode(MOTORDATA, OUTPUT);
-  pinMode(MOTORCLK, OUTPUT);
+  gpioInit(MOTORLATCH,GPIO_OUTPUT);
+  gpioInit(MOTORLATCH,GPIO_OUTPUT);
+  gpioInit(MOTORLATCH,GPIO_OUTPUT);
+  gpioInit(MOTORLATCH,GPIO_OUTPUT);
+
+  //pinMode(MOTORLATCH, OUTPUT);
+  //pinMode(MOTORENABLE, OUTPUT);
+  //pinMode(MOTORDATA, OUTPUT);
+  //pinMode(MOTORCLK, OUTPUT);
 
   latch_state = 0;
 
   latch_tx();  // "reset"
 
   //ENABLE_PORT &= ~_BV(ENABLE); // enable the chip outputs!
-  digitalWrite(MOTORENABLE, LOW);
+  //digitalWrite(MOTORENABLE, LOW);
+  gpioWrite(MOTORENABLE,GPIO_LOW);
 }
 
 

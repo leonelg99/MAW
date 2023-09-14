@@ -5,8 +5,8 @@
 #define _AFMotor_h_
 
 #include <inttypes.h>
-#include <avr/io.h>
-
+//#include <avr/io.h>
+#include "sapi.h"
 // comment out this line to remove microstepping support
 // for smaller library. Be sure to delete the old library objects!
 #define MICROSTEPPING 1
@@ -62,10 +62,10 @@
 */
 
 // Arduino pin names
-#define MOTORLATCH 12
-#define MOTORCLK 4
-#define MOTORENABLE 7
-#define MOTORDATA 8
+#define MOTORLATCH GPIO5
+#define MOTORCLK GPIO3
+#define MOTORENABLE GPIO1
+#define MOTORDATA GPIO7
 
 class MSMotorController
 {
