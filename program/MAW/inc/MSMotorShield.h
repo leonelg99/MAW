@@ -15,6 +15,8 @@
 #define MICROSTEP 8
 #endif
 
+#define _BV	(bit) (1 << (bit))
+
 #define MOTOR12_64KHZ _BV(CS20)  // no prescale
 #define MOTOR12_8KHZ _BV(CS21)   // divide by 8
 #define MOTOR12_2KHZ _BV(CS21) | _BV(CS20) // divide by 32
@@ -23,6 +25,8 @@
 #define MOTOR34_64KHZ _BV(CS00)  // no prescale
 #define MOTOR34_8KHZ _BV(CS01)   // divide by 8
 #define MOTOR34_1KHZ _BV(CS01) | _BV(CS00)  // divide by 64
+
+
 
 #define MOTOR1_A 2
 #define MOTOR1_B 3
@@ -61,7 +65,7 @@
 #define SER_PORT PORTB
 */
 
-// Arduino pin names
+// EDU_CIAA_NXP pin names
 #define MOTORLATCH GPIO5
 #define MOTORCLK GPIO3
 #define MOTORENABLE GPIO1
