@@ -49,27 +49,34 @@ void MSMotorController::latch_tx(void) {
   uint8_t i;
 
   //LATCH_PORT &= ~_BV(LATCH);
-  digitalWrite(MOTORLATCH, LOW);
+  //digitalWrite(MOTORLATCH, LOW);
+  gpioWrite(MOTORLATCH, GPIO_LOW);
 
   //SER_PORT &= ~_BV(SER);
-  digitalWrite(MOTORDATA, LOW);
+  //digitalWrite(MOTORDATA, LOW);
+  gpioWrite(MOTORDATA, GPIO_LOW);
 
   for (i=0; i<8; i++) {
     //CLK_PORT &= ~_BV(CLK);
-    digitalWrite(MOTORCLK, LOW);
+    //digitalWrite(MOTORCLK, LOW);
+	  gpioWrite(MOTORCLK, GPIO_LOW);
 
     if (latch_state & _BV(7-i)) {
       //SER_PORT |= _BV(SER);
-      digitalWrite(MOTORDATA, HIGH);
+      //digitalWrite(MOTORDATA, HIGH);
+    	gpioWrite(MOTORDATA, GPIO_HIGH);
     } else {
       //SER_PORT &= ~_BV(SER);
-      digitalWrite(MOTORDATA, LOW);
+      //digitalWrite(MOTORDATA, LOW);
+    	gpioWrite(MOTORDATA, GPIO_LOW);
     }
     //CLK_PORT |= _BV(CLK);
-    digitalWrite(MOTORCLK, HIGH);
+    //digitalWrite(MOTORCLK, HIGH);
+    gpioWrite(MOTORCLK, GPIO_HIGH);
   }
   //LATCH_PORT |= _BV(LATCH);
-  digitalWrite(MOTORLATCH, HIGH);
+  //digitalWrite(MOTORLATCH, HIGH);
+  gpioWrite(MOTORLATCH, GPIO_HIGH);
 }
 
 static MSMotorController MC;
@@ -95,7 +102,8 @@ inline void initPWM1(uint8_t freq) {
     TCCR1B = (freq & 0x7) | _BV(WGM12);
     OCR1A = 0;
 #endif
-    pinMode(11, OUTPUT);
+    //pinMode(11, OUTPUT);
+    gpioInit(11, GPIO_OUTPUT);
 }
 
 inline void setPWM1(uint8_t s) {
@@ -130,7 +138,8 @@ inline void initPWM2(uint8_t freq) {
     TCCR3B = (freq & 0x7) | _BV(WGM12);
     OCR3C = 0;
 #endif
-    pinMode(3, OUTPUT);
+    //pinMode(3, OUTPUT);
+    gpioInit(3, GPIO_OUTPUT);
 }
 
 inline void setPWM2(uint8_t s) {
@@ -166,7 +175,8 @@ inline void initPWM3(uint8_t freq) {
     //TCCR4B = 1 | _BV(WGM12);
     OCR4A = 0;
 #endif
-    pinMode(6, OUTPUT);
+    //pinMode(6, OUTPUT);
+    gpioInit(6, GPIO_OUTPUT);
 }
 
 inline void setPWM3(uint8_t s) {
@@ -204,7 +214,8 @@ inline void initPWM4(uint8_t freq) {
     //TCCR4B = 1 | _BV(WGM12);
     OCR3A = 0;
 #endif
-    pinMode(5, OUTPUT);
+    //pinMode(5, OUTPUT);
+    gpioInit(5, GPIO_OUTPUT);
 }
 
 inline void setPWM4(uint8_t s) {
@@ -299,10 +310,13 @@ void MS_DCMotor::setSpeed(uint8_t speed) {
   }
 }
 
+// Octa: No se si vamos a usar los motores Steppers, así que dejo el código como está
+//---------------------------------------------------------------------------------------------------------------------
+
 /******************************************
                STEPPERS
 ******************************************/
-
+/* */
 MS_Stepper::MS_Stepper(uint16_t steps, uint8_t num) {
   MC.enable();
 
