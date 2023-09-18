@@ -6,7 +6,30 @@
 //#include <avr/io.h>
 //#include "Arduino.h"
 
-#include "../inc/MSMotorShield.hpp"
+#include "../inc/MSMotorShield.h"
+
+
+
+
+class MSMotorController {
+  public:
+    MSMotorController(void);
+    void enable(void);
+    friend class MS_DCMotor;
+    void latch_tx(void);
+};
+
+class MS_DCMotor
+{
+ public:
+  MS_DCMotor(uint8_t motornum, uint8_t freq =  MOTOR34_8KHZ);
+  void run(uint8_t);
+  void setSpeed(uint8_t);
+
+ private:
+  uint8_t motornum, pwmfreq;
+};
+
 
 static uint8_t latch_state;
 

@@ -6,9 +6,9 @@
 
 /*=====[Inclusions of function dependencies]=================================*/
 
-#include "MAW.h"
+#include "../inc/MAW.h"
 
-#include "../inc/MSMotorShield.hpp"
+#include "../inc/MSMotorShield.h"
 #include "sapi.h"
 
 /*=====[Definition macros of private constants]==============================*/

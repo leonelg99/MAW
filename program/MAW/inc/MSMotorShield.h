@@ -74,40 +74,11 @@
 #define MOTORENABLE GPIO1
 #define MOTORDATA GPIO7
 
-class MSMotorController
-{
-  public:
-    MSMotorController(void);
-    void enable(void);
-    friend class MS_DCMotor;
-    void latch_tx(void);
-};
 
-class MS_DCMotor
-{
- public:
-  MS_DCMotor(uint8_t motornum, uint8_t freq =  MOTOR34_8KHZ);
-  void run(uint8_t);
-  void setSpeed(uint8_t);
 
- private:
-  uint8_t motornum, pwmfreq;
-};
 
-/*
-class MS_Stepper {
- public:
-  MS_Stepper(uint16_t, uint8_t);
-  void step(uint16_t steps, uint8_t dir,  uint8_t style = SINGLE);
-  void setSpeed(uint16_t);
-  uint8_t onestep(uint8_t dir, uint8_t style);
-  void release(void);
-  uint16_t revsteps; // # steps per revolution
-  uint8_t steppernum;
-  uint32_t usperstep, steppingcounter;
- private:
-};
-*/
+
+
 uint8_t getlatchstate(void);
 
 #endif
