@@ -5,6 +5,7 @@
 #define _AFMotor_h_
 
 #include <inttypes.h>
+#include <stdio.h>
 //#include <avr/io.h>
 #include "sapi.h"
 // comment out this line to remove microstepping support
@@ -15,16 +16,18 @@
 #define MICROSTEP 8
 #endif
 
-#define _BV	(bit) (1 << (bit))
+#define BV(b) (1 << (b))
 
-#define MOTOR12_64KHZ _BV(CS20)  // no prescale
-#define MOTOR12_8KHZ _BV(CS21)   // divide by 8
-#define MOTOR12_2KHZ _BV(CS21) | _BV(CS20) // divide by 32
-#define MOTOR12_1KHZ _BV(CS22)  // divide by 64
+#define GPIO_LOW false
+#define GPIO_HIGH true
+/*#define MOTOR12_64KHZ BV(CS20)  // no prescale
+#define MOTOR12_8KHZ BV(CS21)   // divide by 8
+#define MOTOR12_2KHZ BV(CS21) | _BV(CS20) // divide by 32
+#define MOTOR12_1KHZ BV(CS22)  // divide by 64
 
-#define MOTOR34_64KHZ _BV(CS00)  // no prescale
-#define MOTOR34_8KHZ _BV(CS01)   // divide by 8
-#define MOTOR34_1KHZ _BV(CS01) | _BV(CS00)  // divide by 64
+#define MOTOR34_64KHZ BV(CS00)  // no prescale*/
+#define MOTOR34_8KHZ 0   // divide by 8
+//#define MOTOR34_1KHZ BV(CS01) | _BV(CS00)  // divide by 64*/
 
 
 
@@ -91,6 +94,7 @@ class MS_DCMotor
   uint8_t motornum, pwmfreq;
 };
 
+/*
 class MS_Stepper {
  public:
   MS_Stepper(uint16_t, uint8_t);
@@ -103,7 +107,7 @@ class MS_Stepper {
   uint32_t usperstep, steppingcounter;
  private:
 };
-
+*/
 uint8_t getlatchstate(void);
 
 #endif

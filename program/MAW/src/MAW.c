@@ -7,8 +7,9 @@
 /*=====[Inclusions of function dependencies]=================================*/
 
 #include "MAW.h"
+
+#include "../inc/MSMotorShield.hpp"
 #include "sapi.h"
-#include "MSMotorShield.h"
 
 /*=====[Definition macros of private constants]==============================*/
 
