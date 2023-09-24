@@ -9,8 +9,6 @@
 #include "../inc/MSMotorShield.h"
 
 
-
-
 class MSMotorController {
   public:
     MSMotorController(void);
@@ -22,13 +20,16 @@ class MSMotorController {
 class MS_DCMotor
 {
  public:
-  MS_DCMotor(uint8_t motornum, uint8_t freq =  MOTOR34_8KHZ);
+  MS_DCMotor(uint8_t motornum);
   void run(uint8_t);
   void setSpeed(uint8_t);
 
  private:
-  uint8_t motornum, pwmfreq;
+  uint8_t motornum;
 };
+
+
+//-----------------------------------------------------------------------------------------------------------
 
 
 static uint8_t latch_state;
@@ -64,7 +65,7 @@ void MSMotorController::enable(void) {
 
   //ENABLE_PORT &= ~BV(ENABLE); // enable the chip outputs!
   //digitalWrite(MOTORENABLE, LOW);
-  gpioWrite(MOTORENABLE,GPIO_LOW);
+  gpioWrite(MOTORENABLE,LOW);
 }
 
 
@@ -73,33 +74,33 @@ void MSMotorController::latch_tx(void) {
 
   //LATCH_PORT &= ~BV(LATCH);
   //digitalWrite(MOTORLATCH, LOW);
-  gpioWrite(MOTORLATCH, GPIO_LOW);
+  gpioWrite(MOTORLATCH, LOW);
 
   //SER_PORT &= ~BV(SER);
   //digitalWrite(MOTORDATA, LOW);
-  gpioWrite(MOTORDATA, GPIO_LOW);
+  gpioWrite(MOTORDATA, LOW);
 
   for (i=0; i<8; i++) {
     //CLK_PORT &= ~BV(CLK);
     //digitalWrite(MOTORCLK, LOW);
-	  gpioWrite(MOTORCLK, GPIO_LOW);
+	  gpioWrite(MOTORCLK, LOW);
 
     if (latch_state & BV(7-i)) {
       //SER_PORT |= BV(SER);
       //digitalWrite(MOTORDATA, HIGH);
-    	gpioWrite(MOTORDATA, GPIO_HIGH);
+    	gpioWrite(MOTORDATA, HIGH);
     } else {
       //SER_PORT &= ~BV(SER);
       //digitalWrite(MOTORDATA, LOW);
-    	gpioWrite(MOTORDATA, GPIO_LOW);
+    	gpioWrite(MOTORDATA, LOW);
     }
     //CLK_PORT |= BV(CLK);
     //digitalWrite(MOTORCLK, HIGH);
-    gpioWrite(MOTORCLK, GPIO_HIGH);
+    gpioWrite(MOTORCLK, HIGH);
   }
   //LATCH_PORT |= BV(LATCH);
   //digitalWrite(MOTORLATCH, HIGH);
-  gpioWrite(MOTORLATCH, GPIO_HIGH);
+  gpioWrite(MOTORLATCH, HIGH);
 }
 
 static MSMotorController MC;
@@ -108,44 +109,18 @@ static MSMotorController MC;
 /******************************************
                MOTORS
 ******************************************/
-inline void initPWM1(uint8_t freq) {
-/*#if defined(__AVR_ATmega8__) || \
-    defined(__AVR_ATmega48__) || \
-    defined(__AVR_ATmega88__) || \
-    defined(__AVR_ATmega168__) || \
-    defined(__AVR_ATmega328P__)
-    // use PWM from timer2A on PB3 (Arduino pin #11)
-    TCCR2A |= BV(COM2A1) | BV(WGM20) | BV(WGM21); // fast PWM, turn on oc2a
-    TCCR2B = freq & 0x7;
-    OCR2A = 0;
-#elif defined(__AVR_ATmega1280__) || \
-    defined(__AVR_ATmega2560__) 
-    // on arduino mega, pin 11 is now PB5 (OC1A)
-    TCCR1A |= BV(COM1A1) | BV(WGM10); // fast PWM, turn on oc1a
-    TCCR1B = (freq & 0x7) | BV(WGM12);
-    OCR1A = 0;
-#endif
-    //pinMode(11, OUTPUT);
-    gpioInit(11, GPIO_OUTPUT);*/
+inline void initPWM1() {
+	pwmInit(PWM0, PWM_ENABLE);
 }
 
-inline void setPWM1(uint8_t s) {
-/*#if defined(__AVR_ATmega8__) || \
-    defined(__AVR_ATmega48__) || \
-    defined(__AVR_ATmega88__) || \
-    defined(__AVR_ATmega168__) || \
-    defined(__AVR_ATmega328P__)
-    // use PWM from timer2A on PB3 (Arduino pin #11)
-    OCR2A = s;
-#elif defined(__AVR_ATmega1280__) || \
-    defined(__AVR_ATmega2560__) 
-    // on arduino mega, pin 11 is now PB5 (OC1A)
-    OCR1A = s;
-#endif*/
+inline void setPWM1(uint8_t percent) {
+	pwmWrite(PWM0, percent);
+	pwmInit(PWM0, PWM_ENABLE_OUTPUT);
 }
 
+/*
 inline void initPWM2(uint8_t freq) {
-/*#if defined(__AVR_ATmega8__) || \
+#if defined(__AVR_ATmega8__) || \
     defined(__AVR_ATmega48__) || \
     defined(__AVR_ATmega88__) || \
     defined(__AVR_ATmega168__) || \
@@ -155,18 +130,20 @@ inline void initPWM2(uint8_t freq) {
     TCCR2B = freq & 0x7;
     OCR2B = 0;
 #elif defined(__AVR_ATmega1280__) || \
-    defined(__AVR_ATmega2560__) 
+    defined(__AVR_ATmega2560__)
     // on arduino mega, pin 3 is now PE5 (OC3C)
     TCCR3A |= BV(COM1C1) | BV(WGM10); // fast PWM, turn on oc3c
     TCCR3B = (freq & 0x7) | BV(WGM12);
     OCR3C = 0;
 #endif
     //pinMode(3, OUTPUT);
-    gpioInit(3, GPIO_OUTPUT);*/
+    gpioInit(3, GPIO_OUTPUT);
 }
+*/
 
+/*
 inline void setPWM2(uint8_t s) {
-/*#if defined(__AVR_ATmega8__) || \
+#if defined(__AVR_ATmega8__) || \
     defined(__AVR_ATmega48__) || \
     defined(__AVR_ATmega88__) || \
     defined(__AVR_ATmega168__) || \
@@ -174,48 +151,41 @@ inline void setPWM2(uint8_t s) {
     // use PWM from timer2A on PB3 (Arduino pin #11)
     OCR2B = s;
 #elif defined(__AVR_ATmega1280__) || \
-    defined(__AVR_ATmega2560__) 
+    defined(__AVR_ATmega2560__)
     // on arduino mega, pin 11 is now PB5 (OC1A)
     OCR3C = s;
-#endif*/
-}
-
-inline void initPWM3(uint8_t freq) {
-/*#if defined(__AVR_ATmega8__) || \
-    defined(__AVR_ATmega48__) || \
-    defined(__AVR_ATmega88__) || \
-    defined(__AVR_ATmega168__) || \
-    defined(__AVR_ATmega328P__)
-    // use PWM from timer0A / PD6 (pin 6)
-    TCCR0A |= BV(COM0A1) | BV(WGM00) | BV(WGM01); // fast PWM, turn on OC0A
-    //TCCR0B = freq & 0x7;
-    OCR0A = 0;
-#elif defined(__AVR_ATmega1280__) || \
-    defined(__AVR_ATmega2560__) 
-    // on arduino mega, pin 6 is now PH3 (OC4A)
-    TCCR4A |= BV(COM1A1) | BV(WGM10); // fast PWM, turn on oc4a
-    TCCR4B = (freq & 0x7) | BV(WGM12);
-    //TCCR4B = 1 | BV(WGM12);
-    OCR4A = 0;
 #endif
-    //pinMode(6, OUTPUT);
-    gpioInit(6, GPIO_OUTPUT);*/
+}
+*/
+
+inline void initPWM2() {
+	pwmInit(PWM1, PWM_ENABLE);
 }
 
-inline void setPWM3(uint8_t s) {
-
+inline void setPWM2(uint8_t percent) {
+	pwmWrite(PWM1, percent);
+	pwmInit(PWM1, PWM_ENABLE_OUTPUT);
 }
 
-
-
-inline void initPWM4(uint8_t freq) {
-
+inline void initPWM3() {
+	pwmInit(PWM2, PWM_ENABLE);
 }
 
-inline void setPWM4(uint8_t s) {
-
+inline void setPWM3(uint8_t percent) {
+	pwmWrite(PWM2, percent);
+	pwmInit(PWM2, PWM_ENABLE_OUTPUT);
 }
 
+inline void initPWM4() {
+	pwmInit(PWM3, PWM_ENABLE);
+}
+
+inline void setPWM4(uint8_t percent) {
+	pwmWrite(PWM3, percent);
+	pwmInit(PWM3, PWM_ENABLE_OUTPUT);
+}
+
+/*
 MS_DCMotor::MS_DCMotor(uint8_t num, uint8_t freq) {
   motornum = num;
   pwmfreq = freq;
@@ -242,6 +212,36 @@ MS_DCMotor::MS_DCMotor(uint8_t num, uint8_t freq) {
     latch_state &= ~BV(MOTOR4_A) & ~BV(MOTOR4_B); // set both motor pins to 0
     MC.latch_tx();
     initPWM4(freq);
+    break;
+  }
+}
+*/
+
+MS_DCMotor::MS_DCMotor(uint8_t num) {
+  motornum = num;
+
+  MC.enable();
+
+  switch (num) {
+  case 1:
+    latch_state &= ~BV(MOTOR1_A) & ~BV(MOTOR1_B); // set both motor pins to 0
+    MC.latch_tx();
+    initPWM1();
+    break;
+  case 2:
+    latch_state &= ~BV(MOTOR2_A) & ~BV(MOTOR2_B); // set both motor pins to 0
+    MC.latch_tx();
+    initPWM2();
+    break;
+  case 3:
+    latch_state &= ~BV(MOTOR3_A) & ~BV(MOTOR3_B); // set both motor pins to 0
+    MC.latch_tx();
+    initPWM3();
+    break;
+  case 4:
+    latch_state &= ~BV(MOTOR4_A) & ~BV(MOTOR4_B); // set both motor pins to 0
+    MC.latch_tx();
+    initPWM4();
     break;
   }
 }
@@ -280,6 +280,7 @@ void MS_DCMotor::run(uint8_t cmd) {
   }
 }
 
+/*
 void MS_DCMotor::setSpeed(uint8_t speed) {
   switch (motornum) {
   case 1:
@@ -290,6 +291,20 @@ void MS_DCMotor::setSpeed(uint8_t speed) {
     setPWM3(speed); break;
   case 4:
     setPWM4(speed); break;
+  }
+}
+*/
+
+void MS_DCMotor::setSpeed(uint8_t percent) {
+  switch (motornum) {
+  case 1:
+    setPWM1(percent); break;
+  case 2:
+    setPWM2(percent); break;
+  case 3:
+    setPWM3(percent); break;
+  case 4:
+    setPWM4(percent); break;
   }
 }
 

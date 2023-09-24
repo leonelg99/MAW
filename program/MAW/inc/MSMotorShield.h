@@ -18,8 +18,6 @@
 
 #define BV(b) (1 << (b))
 
-#define GPIO_LOW false
-#define GPIO_HIGH true
 /*#define MOTOR12_64KHZ BV(CS20)  // no prescale
 #define MOTOR12_8KHZ BV(CS21)   // divide by 8
 #define MOTOR12_2KHZ BV(CS21) | _BV(CS20) // divide by 32
