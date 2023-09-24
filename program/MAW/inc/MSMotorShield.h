@@ -18,17 +18,6 @@
 
 #define BV(b) (1 << (b))
 
-/*#define MOTOR12_64KHZ BV(CS20)  // no prescale
-#define MOTOR12_8KHZ BV(CS21)   // divide by 8
-#define MOTOR12_2KHZ BV(CS21) | _BV(CS20) // divide by 32
-#define MOTOR12_1KHZ BV(CS22)  // divide by 64
-
-#define MOTOR34_64KHZ BV(CS00)  // no prescale*/
-#define MOTOR34_8KHZ 0   // divide by 8
-//#define MOTOR34_1KHZ BV(CS01) | _BV(CS00)  // divide by 64*/
-
-
-
 #define MOTOR1_A 2
 #define MOTOR1_B 3
 #define MOTOR2_A 1
@@ -67,15 +56,10 @@
 */
 
 // EDU_CIAA_NXP pin names
-#define MOTORLATCH GPIO5
-#define MOTORCLK GPIO3
-#define MOTORENABLE GPIO1
-#define MOTORDATA GPIO7
-
-
-
-
-
+#define MOTORLATCH GPIO1
+#define MOTORCLK GPIO7
+#define MOTORENABLE GPIO5
+#define MOTORDATA GPIO3
 
 uint8_t getlatchstate(void);
 
