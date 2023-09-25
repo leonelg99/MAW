@@ -9,6 +9,7 @@
 #include "../inc/MAW.h"
 
 #include "../inc/MSMotorShield.h"
+#include "MSMotorShield.cpp"
 #include "sapi.h"
 
 /*=====[Definition macros of private constants]==============================*/
@@ -25,8 +26,12 @@ int main( void )
 {
    // ----- Setup -----------------------------------
 
+	MS_DCMotor motor(1);
+	motor.setSpeed(200);
+	motor.run(RELEASE);
    // ----- Repeat for ever -------------------------
    while( 1 ) {
+	   motor.run(FORWARD);
 
    }
 
