@@ -8,8 +8,9 @@
 
 #include "../inc/MAW.h"
 
-#include "../inc/MSMotorShield.h"
-#include "MSMotorShield.cpp"
+//#include "../inc/MSMotorShield.h"
+//#include "MSMotorShield.cpp"
+#include "../inc/CxxWrapper.h"
 #include "sapi.h"
 
 /*=====[Definition macros of private constants]==============================*/
@@ -26,12 +27,12 @@ int main( void )
 {
    // ----- Setup -----------------------------------
 
-	MS_DCMotor motor(1);
-	motor.setSpeed(200);
-	motor.run(RELEASE);
+	struct MS_DCMotor* M1=newMS_DCMotor(1);
+	setSpeed(M1,200);
+	run(M1,RELEASE);
    // ----- Repeat for ever -------------------------
    while( 1 ) {
-	   motor.run(FORWARD);
+	   run(M1,FORWARD);
 
    }
 

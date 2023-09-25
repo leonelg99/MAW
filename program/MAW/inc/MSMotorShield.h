@@ -63,4 +63,24 @@
 
 uint8_t getlatchstate(void);
 
+class MSMotorController {
+  public:
+    MSMotorController(void);
+    void enable(void);
+    friend class MS_DCMotor;
+    void latch_tx(void);
+};
+
+class MS_DCMotor
+{
+ public:
+  MS_DCMotor(uint8_t motornum);
+  void run(uint8_t);
+  void setSpeed(uint8_t);
+
+ private:
+  uint8_t motornum;
+};
+
+
 #endif
