@@ -13,19 +13,19 @@
 static void latchTx(void);
 static void motorsEnable(void);
 static void setSpeed(uint8_t, uint8_t);
-static inline void initPWM1(void);
-static inline void initPWM2(void);
-static inline void initPWM3(void);
-static inline void initPWM4(void);
-static inline void setPWM1(uint8_t);
-static inline void setPWM2(uint8_t);
-static inline void setPWM3(uint8_t);
-static inline void setPWM4(uint8_t);
-static void setSpeed(uint8_t, uint8_t);
-static void run(uint8_t, uint8_t);
-static void goForward(uint8_t);
-static void goBackward(uint8_t);
-static void goRelease(uint8_t);
+static inline uint8_t initPWM1(void);
+static inline uint8_t initPWM2(void);
+static inline uint8_t initPWM3(void);
+static inline uint8_t initPWM4(void);
+static inline uint8_t setPWM1(uint8_t);
+static inline uint8_t setPWM2(uint8_t);
+static inline uint8_t setPWM3(uint8_t);
+static inline uint8_t setPWM4(uint8_t);
+static uint8_t setSpeed(uint8_t, uint8_t);
+static uint8_t run(uint8_t, uint8_t);
+static uint8_t goForward(uint8_t);
+static uint8_t goBackward(uint8_t);
+static uint8_t goRelease(uint8_t);
 /******************************************
            LATCH CONTROLLER
 ******************************************/
@@ -97,43 +97,69 @@ static void motorsEnable(void) {
 /******************************************
                MOTORS
 ******************************************/
-static inline void initPWM1() {
-	pwmInit(PWM0, PWM_ENABLE);
+
+static inline uint8_t initPWM1() {
+	return(pwmInit(PWM0, PWM_ENABLE));
 }
 
-static inline void setPWM1(uint8_t percent) {
-	pwmInit(PWM0, PWM_ENABLE_OUTPUT);
-	pwmWrite(PWM0, percent);
+static inline uint8_t setPWM1(uint8_t percent) {
+	uint8_t error= 1;
+
+	if(pwmInit(PWM0, PWM_ENABLE_OUTPUT)){
+		error--;
+	}
+	if(pwmWrite(PWM0, percent)){
+		error--;
+	}
+
+	return(error);
 }
 
-static inline void initPWM2() {
-	pwmInit(PWM1, PWM_ENABLE);
+static inline uint8_t initPWM2() {
+	return(pwmInit(PWM1, PWM_ENABLE));
 }
 
-static inline void setPWM2(uint8_t percent) {
-	pwmInit(PWM1, PWM_ENABLE_OUTPUT);
-	pwmWrite(PWM1, percent);
+static inline uint8_t setPWM2(uint8_t percent) {
+	uint8_t error= 1;
+	if(pwmInit(PWM1, PWM_ENABLE_OUTPUT)){
+		error--;
+	}
+	if(pwmWrite(PWM1, percent)){
+		error--;
+	}
 
+	return (error);
+}
+static inline uint8_t initPWM3() {
+	return(pwmInit(PWM2, PWM_ENABLE));
 }
 
-static inline void initPWM3() {
-	pwmInit(PWM2, PWM_ENABLE);
+static inline uint8_t setPWM3(uint8_t percent) {
+	uint8_t error= 1;
+	if(pwmInit(PWM2, PWM_ENABLE_OUTPUT)){
+		error--;
+	}
+	if(pwmWrite(PWM2, percent)){
+		error--;
+	}
+
+	return (error);
 }
 
-static inline void setPWM3(uint8_t percent) {
-	pwmInit(PWM2, PWM_ENABLE_OUTPUT);
-	pwmWrite(PWM2, percent);
-
+static inline uint8_t initPWM4() {
+	return(pwmInit(PWM3, PWM_ENABLE));
 }
 
-static inline void initPWM4() {
-	pwmInit(PWM3, PWM_ENABLE);
-}
+static inline uint8_t setPWM4(uint8_t percent) {
+	uint8_t error= 1;
+	if(pwmInit(PWM3, PWM_ENABLE_OUTPUT)){
+		error--;
+	}
+	if(pwmWrite(PWM1, percent)){
+		error--;
+	}
 
-static inline void setPWM4(uint8_t percent) {
-	pwmInit(PWM3, PWM_ENABLE_OUTPUT);
-	pwmWrite(PWM3, percent);
-
+	return (error);
 }
 
 
@@ -170,7 +196,7 @@ uint8_t motorsInit() {
 
 }
 
-static void setSpeed(uint8_t motornum, uint8_t percent) {
+static uint8_t setSpeed(uint8_t motornum, uint8_t percent) {
   switch (motornum) {
   case 1:
     setPWM1(percent); break;
@@ -183,7 +209,7 @@ static void setSpeed(uint8_t motornum, uint8_t percent) {
   }
 }
 
-static void run(uint8_t motornum, uint8_t cmd) {
+static uint8_t run(uint8_t motornum, uint8_t cmd) {
   uint8_t a, b;
   switch (motornum) {
   case 1:
@@ -218,7 +244,7 @@ static void run(uint8_t motornum, uint8_t cmd) {
 }
 
 
-static void goForward(uint8_t speed){
+static uint8_t goForward(uint8_t speed){
 	for(int i=1; i<=4;i++){
 		setSpeed(i,speed);
 	}
@@ -227,7 +253,7 @@ static void goForward(uint8_t speed){
 	}
 }
 
-static void goBackward(uint8_t speed){
+static uint8_t goBackward(uint8_t speed){
 	for(int i=1; i<=4;i++){
 		setSpeed(i,speed);
 	}
@@ -236,7 +262,7 @@ static void goBackward(uint8_t speed){
 	}
 }
 
-static void goRelease(uint8_t speed){
+static uint8_t goRelease(uint8_t speed){
 	for(int i=1; i<=4;i++){
 		setSpeed(i,speed);
 	}
