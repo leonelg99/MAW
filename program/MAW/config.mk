@@ -10,3 +10,6 @@ USE_FPU=y
 
 USE_LPCOPEN=y
 USE_SAPI=y
+
+# Need for generate servo interrupts
+DEFINES+=SAPI_USE_INTERRUPTS

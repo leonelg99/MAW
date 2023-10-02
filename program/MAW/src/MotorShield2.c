@@ -12,7 +12,6 @@
 //Function Prototypes
 static void latchTx(void);
 static void motorsEnable(void);
-static void setSpeed(uint8_t, uint8_t);
 static inline uint8_t initPWM1(void);
 static inline uint8_t initPWM2(void);
 static inline uint8_t initPWM3(void);
@@ -105,11 +104,11 @@ static inline uint8_t initPWM1() {
 static inline uint8_t setPWM1(uint8_t percent) {
 	uint8_t error= 1;
 
-	if(pwmInit(PWM0, PWM_ENABLE_OUTPUT)){
-		error--;
+	if(!pwmInit(PWM0, PWM_ENABLE_OUTPUT)){
+		error=0;
 	}
-	if(pwmWrite(PWM0, percent)){
-		error--;
+	if(!pwmWrite(PWM0, percent)){
+		error=-1;
 	}
 
 	return(error);
@@ -121,11 +120,11 @@ static inline uint8_t initPWM2() {
 
 static inline uint8_t setPWM2(uint8_t percent) {
 	uint8_t error= 1;
-	if(pwmInit(PWM1, PWM_ENABLE_OUTPUT)){
-		error--;
+	if(!pwmInit(PWM1, PWM_ENABLE_OUTPUT)){
+		error=0;
 	}
-	if(pwmWrite(PWM1, percent)){
-		error--;
+	if(!pwmWrite(PWM1, percent)){
+		error=-1;
 	}
 
 	return (error);
@@ -136,11 +135,11 @@ static inline uint8_t initPWM3() {
 
 static inline uint8_t setPWM3(uint8_t percent) {
 	uint8_t error= 1;
-	if(pwmInit(PWM2, PWM_ENABLE_OUTPUT)){
-		error--;
+	if(!pwmInit(PWM2, PWM_ENABLE_OUTPUT)){
+		error=0;
 	}
-	if(pwmWrite(PWM2, percent)){
-		error--;
+	if(!pwmWrite(PWM2, percent)){
+		error=-1;
 	}
 
 	return (error);
@@ -152,11 +151,11 @@ static inline uint8_t initPWM4() {
 
 static inline uint8_t setPWM4(uint8_t percent) {
 	uint8_t error= 1;
-	if(pwmInit(PWM3, PWM_ENABLE_OUTPUT)){
-		error--;
+	if(!pwmInit(PWM3, PWM_ENABLE_OUTPUT)){
+		error=0;
 	}
-	if(pwmWrite(PWM1, percent)){
-		error--;
+	if(!pwmWrite(PWM1, percent)){
+		error=-1;
 	}
 
 	return (error);
@@ -195,18 +194,20 @@ uint8_t motorsInit() {
   }
 
 }
-
+static uint8_t aux=1;
 static uint8_t setSpeed(uint8_t motornum, uint8_t percent) {
+
   switch (motornum) {
   case 1:
-    setPWM1(percent); break;
+    aux=setPWM1(percent); break;
   case 2:
-    setPWM2(percent); break;
+    aux=setPWM2(percent); break;
   case 3:
-    setPWM3(percent); break;
+    aux=setPWM3(percent); break;
   case 4:
-    setPWM4(percent); break;
+    aux=setPWM4(percent); break;
   }
+  return aux;
 }
 
 static uint8_t run(uint8_t motornum, uint8_t cmd) {
@@ -221,7 +222,7 @@ static uint8_t run(uint8_t motornum, uint8_t cmd) {
   case 4:
     a = MOTOR4_A; b = MOTOR4_B; break;
   default:
-    return;
+	  break;
   }
 
   switch (cmd) {
@@ -241,6 +242,7 @@ static uint8_t run(uint8_t motornum, uint8_t cmd) {
     latchTx();
     break;
   }
+  return 0;
 }
 
 

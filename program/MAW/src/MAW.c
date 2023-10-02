@@ -12,6 +12,7 @@
 //#include "MSMotorShield.cpp"
 #include "../inc/CxxWrapper.h"
 #include "sapi.h"
+#include "../inc/MotorShield2.h"
 
 /*=====[Definition macros of private constants]==============================*/
 
@@ -23,16 +24,36 @@
 
 /*=====[Main function, program entry point after power on or reset]==========*/
 
+#define SERVO_N   SERVO2
+
 int main( void )
 {
+ 	boardInit();
    // ----- Setup -----------------------------------
 
-	struct MS_DCMotor* M1=newMS_DCMotor(1);
+	/*struct MS_DCMotor* M1=newMS_DCMotor(1);
 	setSpeed(M1,200);
-	run(M1,RELEASE);
+	run(M1,RELEASE);*/
+	//motorsInit();
+	servoConfig (0, SERVO_ENABLE );
+
+	servoConfig( SERVO_N, SERVO_ENABLE_OUTPUT );
+
+	servoWrite( SERVO_N, 0 );
+	servoRead( SERVO_N );
    // ----- Repeat for ever -------------------------
    while( 1 ) {
-	   run(M1,FORWARD);
+	   //run(M1,FORWARD);
+	  //executeCmd(FORWARD,200);
+
+	   servoWrite( SERVO_N, 0 );
+	         delay(500);
+
+	         servoWrite( SERVO_N, 90 );
+	         delay(500);
+
+	         servoWrite( SERVO_N, 180 );
+	         delay(500);
 
    }
 
