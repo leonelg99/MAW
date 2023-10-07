@@ -37,7 +37,7 @@
 #define MOTORENABLE GPIO5
 #define MOTORDATA GPIO3
 
-uint8_t motorsInit(void);
+void motorsInit(void);
 //uint8_t setSpeed(uint8_t motornum, uint8_t speed);
 uint8_t executeCmd(uint8_t cmd, uint8_t speed);
 
