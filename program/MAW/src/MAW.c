@@ -7,10 +7,6 @@
 /*=====[Inclusions of function dependencies]=================================*/
 
 #include "../inc/MAW.h"
-
-//#include "../inc/MSMotorShield.h"
-//#include "MSMotorShield.cpp"
-#include "../inc/CxxWrapper.h"
 #include "sapi.h"
 #include "../inc/MotorShield2.h"
 
@@ -25,40 +21,41 @@
 /*=====[Main function, program entry point after power on or reset]==========*/
 
 #define SERVO_N   SERVO2
-
+#define SERVO_N2  SERVO3
 int main( void )
 {
- 	boardInit();
-   // ----- Setup -----------------------------------
+	 boardConfig();
 
-	/*struct MS_DCMotor* M1=newMS_DCMotor(1);
-	setSpeed(M1,200);
-	run(M1,RELEASE);*/
-	//motorsInit();
-	servoConfig (0, SERVO_ENABLE );
+	 bool_t valor = 0;
 
-	servoConfig( SERVO_N, SERVO_ENABLE_OUTPUT );
+	   uint8_t servoAngle = 0; // 0 a 180 grados
 
-	servoWrite( SERVO_N, 0 );
-	servoRead( SERVO_N );
-   // ----- Repeat for ever -------------------------
-   while( 1 ) {
-	   //run(M1,FORWARD);
-	  //executeCmd(FORWARD,200);
+	   // Configurar Servo
+	   valor = servoConfig( 0, SERVO_ENABLE );
+	   servoConfig( 2, SERVO_ENABLE );
+	   valor = servoConfig( SERVO_N, SERVO_ENABLE_OUTPUT );
+	   servoConfig( SERVO_N2, SERVO_ENABLE_OUTPUT );
+	   // Usar Servo
+	   valor = servoWrite( SERVO_N, servoAngle );
+	   servoWrite( SERVO_N2, servoAngle );
+	   gpioWrite( LEDB, 1 );
 
-	   servoWrite( SERVO_N, 0 );
-	         delay(500);
+	   // ------------- REPETIR POR SIEMPRE -------------
+	   while(1) {
+	      servoWrite( SERVO_N, 0 );
+	      servoWrite( SERVO_N2, 0 );
+	      delay(500);
 
-	         servoWrite( SERVO_N, 90 );
-	         delay(500);
+	      servoWrite( SERVO_N, 90 );
+	      servoWrite( SERVO_N2, 90 );
+	      delay(500);
 
-	         servoWrite( SERVO_N, 180 );
-	         delay(500);
+	      servoWrite( SERVO_N, 180 );
+	      servoWrite( SERVO_N2, 180 );
+	      delay(500);
+	   }
 
-   }
-
-   // YOU NEVER REACH HERE, because this program runs directly or on a
-   // microcontroller and is not called by any Operating System, as in the 
-   // case of a PC program.
-   return 0;
+	   // NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa no es llamado
+	   // por ningun S.O.
+	   return 0 ;
 }
