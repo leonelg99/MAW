@@ -20,11 +20,11 @@ static inline uint8_t setPWM1(uint8_t);
 static inline uint8_t setPWM2(uint8_t);
 static inline uint8_t setPWM3(uint8_t);
 static inline uint8_t setPWM4(uint8_t);
-static uint8_t setSpeed(uint8_t, uint8_t);
-static uint8_t run(uint8_t, uint8_t);
+static void setSpeed(uint8_t, uint8_t);
+static void run(uint8_t, uint8_t);
 static uint8_t goForward(uint8_t);
 static uint8_t goBackward(uint8_t);
-static uint8_t goRelease(uint8_t);
+static uint8_t goRelease(void);
 /******************************************
            LATCH CONTROLLER
 ******************************************/
@@ -163,7 +163,7 @@ static inline uint8_t setPWM4(uint8_t percent) {
 
 
 
-uint8_t motorsInit() {
+void motorsInit() {
 
 
   motorsEnable();
@@ -194,23 +194,21 @@ uint8_t motorsInit() {
   }
 
 }
-static uint8_t aux=1;
-static uint8_t setSpeed(uint8_t motornum, uint8_t percent) {
 
+static void setSpeed(uint8_t motornum, uint8_t percent) {
   switch (motornum) {
   case 1:
-    aux=setPWM1(percent); break;
+    setPWM1(percent); break;
   case 2:
-    aux=setPWM2(percent); break;
+    setPWM2(percent); break;
   case 3:
-    aux=setPWM3(percent); break;
+    setPWM3(percent); break;
   case 4:
-    aux=setPWM4(percent); break;
+    setPWM4(percent); break;
   }
-  return aux;
 }
 
-static uint8_t run(uint8_t motornum, uint8_t cmd) {
+static void run(uint8_t motornum, uint8_t cmd) {
   uint8_t a, b;
   switch (motornum) {
   case 1:
@@ -242,7 +240,6 @@ static uint8_t run(uint8_t motornum, uint8_t cmd) {
     latchTx();
     break;
   }
-  return 0;
 }
 
 
@@ -264,9 +261,9 @@ static uint8_t goBackward(uint8_t speed){
 	}
 }
 
-static uint8_t goRelease(uint8_t speed){
+static uint8_t goRelease(void){
 	for(int i=1; i<=4;i++){
-		setSpeed(i,speed);
+		setSpeed(i,0);
 	}
 	for(int i=1;i<=4;i++){
 		run(i,RELEASE);
