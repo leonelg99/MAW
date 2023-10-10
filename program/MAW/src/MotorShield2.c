@@ -25,6 +25,8 @@ static void run(uint8_t, uint8_t);
 static uint8_t goForward(uint8_t);
 static uint8_t goBackward(uint8_t);
 static uint8_t goRelease(void);
+static uint8_t goRotateRight(void);
+static uint8_t goRotateLeft(void);
 /******************************************
            LATCH CONTROLLER
 ******************************************/
@@ -100,7 +102,6 @@ static void motorsEnable(void) {
 static inline uint8_t initPWM1() {
 	return(pwmInit(PWM0, PWM_ENABLE));
 }
-
 static inline uint8_t setPWM1(uint8_t percent) {
 	uint8_t error= 1;
 
@@ -114,10 +115,10 @@ static inline uint8_t setPWM1(uint8_t percent) {
 	return(error);
 }
 
+
 static inline uint8_t initPWM2() {
 	return(pwmInit(PWM1, PWM_ENABLE));
 }
-
 static inline uint8_t setPWM2(uint8_t percent) {
 	uint8_t error= 1;
 	if(!pwmInit(PWM1, PWM_ENABLE_OUTPUT)){
@@ -129,10 +130,11 @@ static inline uint8_t setPWM2(uint8_t percent) {
 
 	return (error);
 }
+
+
 static inline uint8_t initPWM3() {
 	return(pwmInit(PWM2, PWM_ENABLE));
 }
-
 static inline uint8_t setPWM3(uint8_t percent) {
 	uint8_t error= 1;
 	if(!pwmInit(PWM2, PWM_ENABLE_OUTPUT)){
@@ -145,10 +147,10 @@ static inline uint8_t setPWM3(uint8_t percent) {
 	return (error);
 }
 
+
 static inline uint8_t initPWM4() {
 	return(pwmInit(PWM3, PWM_ENABLE));
 }
-
 static inline uint8_t setPWM4(uint8_t percent) {
 	uint8_t error= 1;
 	if(!pwmInit(PWM3, PWM_ENABLE_OUTPUT)){
@@ -160,7 +162,6 @@ static inline uint8_t setPWM4(uint8_t percent) {
 
 	return (error);
 }
-
 
 
 void motorsInit() {
@@ -242,6 +243,15 @@ static void run(uint8_t motornum, uint8_t cmd) {
   }
 }
 
+/*
+ *
+ * M1 |------| M4
+ *       |
+ * 	     |
+ * M2 |------| M3
+ *
+ * */
+
 
 static uint8_t goForward(uint8_t speed){
 	for(int i=1; i<=4;i++){
@@ -270,6 +280,30 @@ static uint8_t goRelease(void){
 	}
 }
 
+static uint8_t goRotateRight(uint8_t speed){
+	for(int i=1; i<=4;i++){
+		setSpeed(i,speed);
+	}
+	for(int i=1;i<=2;i++){
+		run(i,FORWARD);
+	}
+	for(int i=3;i<=4;i++){
+		run(i,BACKWARD);
+	}
+}
+
+static uint8_t goRotateLeft(uint8_t speed){
+	for(int i=1; i<=4;i++){
+		setSpeed(i,speed);
+	}
+	for(int i=1;i<=2;i++){
+		run(i,BACKWARD);
+	}
+	for(int i=3;i<=4;i++){
+		run(i,FORWARD);
+	}
+}
+
 uint8_t executeCmd(uint8_t cmd, uint8_t speed){
 	switch (cmd){
 	case FORWARD:
@@ -281,9 +315,11 @@ uint8_t executeCmd(uint8_t cmd, uint8_t speed){
 	case RELEASE:
 		goRelease(speed);
 		break;
-	case RIGHT:
+	case ROTATERIGHT:
+		goRotateRight(speed);
 		break;
-	case LEFT:
+	case ROTATELEFT:
+		goRotateLeft(speed);
 		break;
 	case TURNRIGHT:
 		break;

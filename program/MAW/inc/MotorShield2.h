@@ -26,8 +26,8 @@
 #define BACKWARD 2
 #define BRAKE 3
 #define RELEASE 4
-#define	RIGHT 5
-#define	LEFT 6
+#define	ROTATERIGHT 5
+#define	ROTATELEFT 6
 #define	TURNRIGHT 7
 #define TURNLEFT 8
 
