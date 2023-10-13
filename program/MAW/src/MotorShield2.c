@@ -25,8 +25,9 @@ static void run(uint8_t, uint8_t);
 static uint8_t goForward(uint8_t);
 static uint8_t goBackward(uint8_t);
 static uint8_t goRelease(void);
-static uint8_t goRotateRight(void);
-static uint8_t goRotateLeft(void);
+static uint8_t goRotateRight(uint8_t);
+static uint8_t goRotateLeft(uint8_t);
+
 /******************************************
            LATCH CONTROLLER
 ******************************************/
@@ -271,13 +272,14 @@ static uint8_t goBackward(uint8_t speed){
 	}
 }
 
-static uint8_t goRelease(void){
+static uint8_t goRelease(){
 	for(int i=1; i<=4;i++){
 		setSpeed(i,0);
 	}
 	for(int i=1;i<=4;i++){
 		run(i,RELEASE);
 	}
+	return 0;
 }
 
 static uint8_t goRotateRight(uint8_t speed){
@@ -290,6 +292,8 @@ static uint8_t goRotateRight(uint8_t speed){
 	for(int i=3;i<=4;i++){
 		run(i,BACKWARD);
 	}
+
+	return 0;
 }
 
 static uint8_t goRotateLeft(uint8_t speed){
@@ -302,9 +306,10 @@ static uint8_t goRotateLeft(uint8_t speed){
 	for(int i=3;i<=4;i++){
 		run(i,FORWARD);
 	}
+	return 0;
 }
 
-uint8_t executeCmd(uint8_t cmd, uint8_t speed){
+uint8_t vehicleCmd(uint8_t cmd, uint8_t angle, uint8_t speed){
 	switch (cmd){
 	case FORWARD:
 		goForward(speed);
@@ -313,7 +318,7 @@ uint8_t executeCmd(uint8_t cmd, uint8_t speed){
 		goBackward(speed);
 		break;
 	case RELEASE:
-		goRelease(speed);
+		goRelease();
 		break;
 	case ROTATERIGHT:
 		goRotateRight(speed);
@@ -324,6 +329,12 @@ uint8_t executeCmd(uint8_t cmd, uint8_t speed){
 	case TURNRIGHT:
 		break;
 	case TURNLEFT:
+		break;
+	case TURNRIGHTBACKWARD:
+		break;
+	case TURNLEFTBACKWARD:
+		break;
+	case BRAKE:
 		break;
 	}
 }

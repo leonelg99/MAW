@@ -30,6 +30,8 @@
 #define	ROTATELEFT 6
 #define	TURNRIGHT 7
 #define TURNLEFT 8
+#define TURNRIGHTBACKWARD 9
+#define TURNLEFTBACKWARD 10
 
 // EDU_CIAA_NXP pin names
 #define MOTORLATCH GPIO1
@@ -39,7 +41,7 @@
 
 void motorsInit(void);
 //uint8_t setSpeed(uint8_t motornum, uint8_t speed);
-uint8_t executeCmd(uint8_t cmd, uint8_t speed);
+uint8_t vehicleCmd(uint8_t cmd, uint8_t angles, uint8_t speed);
 
 
 #endif /* PROGRAM_MAW_INC_MOTORSHIELD2_H_ */
