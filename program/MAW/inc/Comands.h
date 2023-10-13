@@ -12,4 +12,6 @@
 #include <string.h>
 #include <stdio.h>
 
+uint8_t executeAction(uint8_t []);
+
 #endif /* PROGRAM_MAW_INC_COMANDS_H_ */

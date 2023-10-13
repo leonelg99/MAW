@@ -9,13 +9,14 @@
 
 static uint8_t MODE=0; //VEHICLE MODE
 
+static void decodeMessage(uint8_t [], uint8_t *, uint8_t *, uint8_t *);
 static void motorAction(uint8_t [], uint8_t, uint8_t);
 static void armAction(uint8_t, uint8_t, uint8_t);
 
-uint8_t execuetAction(uint8_t msg[]){
+uint8_t executeAction(uint8_t msg[]){
 	uint8_t cmd[5]={}, value1=0,value2=0;
 
-	//decodeMessage(&cmd,&value,&value2);  a implmentar
+	decodeMessage(msg,&cmd,&value1,&value2);
 
 	if(strcmp(cmd,"MODE")==0){
 		MODE=!MODE;
@@ -31,6 +32,34 @@ uint8_t execuetAction(uint8_t msg[]){
 	return 0;
 
 
+}
+
+static void decodeMessage(uint8_t msg[], uint8_t * cmd, uint8_t * v1, uint8_t * v2){
+	// Usamos strtok para dividir la cadena en tokens usando ':'
+	    char *token = strtok((char *)msg, ":");
+
+	    // El primer token es la palabra
+	    if (token != NULL) {
+	        strcpy(cmd, token);
+	    } else {
+	        // Manejar un error si es necesario
+	    }
+
+	    // El segundo token es valor1
+	    token = strtok(NULL, ":");
+	    if (token != NULL) {
+	        *v1 = atoi(token);
+	    } else {
+	        // Manejar un error si es necesario
+	    }
+
+	    // El tercer token es valor2
+	    token = strtok(NULL, "\n");
+	    if (token != NULL) {
+	        *v2 = atoi(token);
+	    } else {
+	        // Manejar un error si es necesario
+	    }
 }
 
 static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){

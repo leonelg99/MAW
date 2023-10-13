@@ -26,9 +26,7 @@ int main( void )
 {
 	 boardConfig();
 
-
-
 	 while(1);
-	 	 executeCmd(msg);
+	 	 executeAction(msg);
 	 return 0 ;
 }
