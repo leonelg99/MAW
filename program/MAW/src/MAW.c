@@ -9,6 +9,8 @@
 #include "../inc/MAW.h"
 #include "sapi.h"
 #include "../inc/Comands.h"
+#include "../inc/UART.h"
+
 
 /*=====[Definition macros of private constants]==============================*/
 
@@ -20,13 +22,19 @@
 
 /*=====[Main function, program entry point after power on or reset]==========*/
 
-static uint8_t msg[50]={};
-
 int main( void )
 {
 	 boardConfig();
 
+	 serialInit();
+
+	 uint8_t volatile msg[50]={};
+	 sendMsg(0);
 	 while(1);
-	 	 executeAction(msg);
+
+	 	 if(receiveMsg(&msg,strlen(msg))){
+	 		executeAction(msg);
+	 	 }
+	 	 memset(msg,0,sizeof(msg));
 	 return 0 ;
 }

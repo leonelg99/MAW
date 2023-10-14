@@ -34,6 +34,7 @@ uint8_t executeAction(uint8_t msg[]){
 
 }
 
+
 static void decodeMessage(uint8_t msg[], uint8_t * cmd, uint8_t * v1, uint8_t * v2){
 	// Usamos strtok para dividir la cadena en tokens usando ':'
 	    char *token = strtok((char *)msg, ":");
@@ -64,7 +65,7 @@ static void decodeMessage(uint8_t msg[], uint8_t * cmd, uint8_t * v1, uint8_t * 
 
 static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
 
-	if(strcmp(cmd,"SR")==0){
+	if(strcmp(cmd,"SR")==0){ //SR STICK RIGHT
 
 		if ((value1>=80) && (value1<=100)){
 			vehicleCmd(FORWARD,value1,value2);
