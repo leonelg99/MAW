@@ -34,7 +34,7 @@ void armInit(){
 
 static void rotate(uint8_t value){
 	angleB = servoRead(SERVO_NB);
-	if((value>=260) && (value<=280)){	//LEFT
+	if((value>=270-MARGIN) && (value<=270+MARGIN)){	//LEFT
 		if(angleB<180)
 			servoWrite(SERVO_NB,(angleB+ANGLE_GAP));
 		else sendMSG(3);
@@ -47,15 +47,30 @@ static void rotate(uint8_t value){
 static void extend(uint8_t value){
 	angleA1 = servoRead(SERVO_NA1);
 	if((value>=90-MARGIN) && (value<=90+MARGIN)){
-		if(angleA1<EXTENSION_MAX_ANGLE)
+		if(angleA2<ALTITUD__MAX_ANGLE)
 			servoWrite(SERVO_NA1,(angleA1+ANGLE_GAP));
 		else sendMSG(3);
 	}else if ((value>=270-MARGIN) && (value<=270+MARGIN)){
-		if(angleA1>0)
+		if(angleA2>0)
 			servoWrite(SERVO_NA1,(angleA1-ANGLE_GAP));
 		else sendMSG(3);
 	}
 }
+
+static void elevation(uint8_t value){
+	angleA2 = servoRead(SERVO_NA2);
+	if((value>=90-MARGIN) && (value<=90+MARGIN)){
+		if(angleA2<ELEVATION_MAX_ANGLE)
+			servoWrite(SERVO_NA2,(angleA2+ANGLE_GAP));
+		else sendMSG(3);
+	}else if ((value>=270-MARGIN) && (value<=270+MARGIN)){
+		if(angleA2>ELEVATION_MIN_ANGLE)
+			servoWrite(SERVO_NA2,(angleA2-ANGLE_GAP));
+		else sendMSG(3);
+	}
+}
+}
+
 void armCmd(uint8_t cmd, uint8_t value){
 
 	switch(cmd){
@@ -66,6 +81,7 @@ void armCmd(uint8_t cmd, uint8_t value){
 		extend(value);
 		break;
 	case ALTITUDE:
+		elevation(value);
 		break;
 	case GRIPPER:
 		break;
