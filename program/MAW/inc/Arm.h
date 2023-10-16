@@ -9,6 +9,7 @@
 #define PROGRAM_MAW_INC_ARM_H_
 
 #include "sapi.h"
+#include "UART.h"
 
 #define SERVO_NB 	7
 #define SERVO_NA1	2
@@ -25,5 +26,12 @@
 #define ALTITUDE  	3
 #define GRIPPER	  	4
 
+#define ANGLE_GAP 2
+#define MARGIN 10
+#define EXTENSION_MAX_ANGLE 180
+
+
+
+void armCmd(uint8_t, uint8_t);
 
 #endif /* PROGRAM_MAW_INC_ARM_H_ */

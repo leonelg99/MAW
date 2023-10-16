@@ -9,9 +9,10 @@
 #define PROGRAM_MAW_INC_COMANDS_H_
 
 #include "../inc/MotorShield2.h"
+#include "../inc/Arm.h"
 #include <string.h>
 #include <stdio.h>
 
-uint8_t executeAction(uint8_t []);
+uint8_t executeCmd(uint8_t []);
 
 #endif /* PROGRAM_MAW_INC_COMANDS_H_ */

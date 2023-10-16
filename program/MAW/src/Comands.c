@@ -13,7 +13,7 @@ static void decodeMessage(uint8_t [], uint8_t *, uint8_t *, uint8_t *);
 static void motorAction(uint8_t [], uint8_t, uint8_t);
 static void armAction(uint8_t, uint8_t, uint8_t);
 
-uint8_t executeAction(uint8_t msg[]){
+uint8_t executeCmd(uint8_t msg[]){
 	uint8_t cmd[5]={}, value1=0,value2=0;
 
 	decodeMessage(msg,&cmd,&value1,&value2);
@@ -90,13 +90,25 @@ static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
 
 }
 
-/*static void armAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
+static void armAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
 	switch(cmd){
 		case "SR":
+			if ((value1>=80) && (value1<=100)){
+
+			}else if((value1>=170) && (value1<=190)){
+
+			}else if((value1>=260) && (value1<=280)){
+				armCmd(ROTATE,value1);
+			}else if(((value1>=0) && (value1<=10))||((value1>=350)&&(value1<360))){
+				armCmd(ROTATE,value1);
+			}
 			break;
 		case "SL"
 			break;
 		case "R2"
+			e
+			break;
+		case "R2"
 			break;
 	}
-}*/
+}

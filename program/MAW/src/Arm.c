@@ -15,6 +15,8 @@ static uint8_t angleG=0;
 
 
 static void servoInits(void);
+static void rotate(uint8_t);
+static void extend(uint8_t);
 
 static void servosInits(){
 
@@ -30,13 +32,38 @@ void armInit(){
 
 }
 
-
-void executeCmd(uint8_t cmd, uint8_t value){
+static void rotate(uint8_t value){
+	angleB = servoRead(SERVO_NB);
+	if((value>=260) && (value<=280)){	//LEFT
+		if(angleB<180)
+			servoWrite(SERVO_NB,(angleB+ANGLE_GAP));
+		else sendMSG(3);
+	}else if(((value>=0) && (value<=10))||((value>=350)&&(value<360))){		//RIGHT
+		if(angleB>0)
+					servoWrite(SERVO_NB,(angleB-ANGLE_GAP));
+		 else sendMSG(3);
+	}
+}
+static void extend(uint8_t value){
+	angleA1 = servoRead(SERVO_NA1);
+	if((value>=90-MARGIN) && (value<=90+MARGIN)){
+		if(angleA1<EXTENSION_MAX_ANGLE)
+			servoWrite(SERVO_NA1,(angleA1+ANGLE_GAP));
+		else sendMSG(3);
+	}else if ((value>=270-MARGIN) && (value<=270+MARGIN)){
+		if(angleA1>0)
+			servoWrite(SERVO_NA1,(angleA1-ANGLE_GAP));
+		else sendMSG(3);
+	}
+}
+void armCmd(uint8_t cmd, uint8_t value){
 
 	switch(cmd){
 	case ROTATE:
+		rotate(value);
 		break;
 	case EXTENSION:
+		extend(value);
 		break;
 	case ALTITUDE:
 		break;

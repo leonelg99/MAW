@@ -33,7 +33,7 @@ int main( void )
 	 while(1);
 
 	 	 if(receiveMsg(&msg,strlen(msg))){
-	 		executeAction(msg);
+	 		executeCmd(msg);
 	 	 }
 	 	 memset(msg,0,sizeof(msg));
 	 return 0 ;
