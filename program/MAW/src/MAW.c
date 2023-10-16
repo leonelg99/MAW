@@ -32,7 +32,7 @@ int main( void )
 	 sendMsg(0);
 	 while(1);
 
-	 	 if(receiveMsg(&msg,strlen(msg))){
+	 	 if(receiveMsg(msg,strlen(msg))){
 	 		executeCmd(msg);
 	 	 }
 	 	 memset(msg,0,sizeof(msg));

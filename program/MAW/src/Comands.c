@@ -11,12 +11,12 @@ static uint8_t MODE=0; //VEHICLE MODE
 
 static void decodeMessage(uint8_t [], uint8_t *, uint8_t *, uint8_t *);
 static void motorAction(uint8_t [], uint8_t, uint8_t);
-static void armAction(uint8_t, uint8_t, uint8_t);
+static void armAction(uint8_t [], uint8_t);
 
 uint8_t executeCmd(uint8_t msg[]){
-	uint8_t cmd[5]={}, value1=0,value2=0;
+	uint8_t cmd[7]={}, value1=0,value2=0;
 
-	decodeMessage(msg,&cmd,&value1,&value2);
+	decodeMessage(msg,cmd,&value1,&value2);
 
 	if(strcmp(cmd,"MODE")==0){
 		MODE=!MODE;
@@ -26,7 +26,7 @@ uint8_t executeCmd(uint8_t msg[]){
 	if(!MODE){
 		motorAction(cmd,value1,value2);
 	}else{
-		//armAction();
+		armAction(cmd,value1);
 	}
 
 	return 0;
@@ -90,25 +90,25 @@ static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
 
 }
 
-static void armAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
-	switch(cmd){
-		case "SR":
-			if ((value1>=80) && (value1<=100)){
-
-			}else if((value1>=170) && (value1<=190)){
-
-			}else if((value1>=260) && (value1<=280)){
-				armCmd(ROTATE,value1);
-			}else if(((value1>=0) && (value1<=10))||((value1>=350)&&(value1<360))){
-				armCmd(ROTATE,value1);
-			}
-			break;
-		case "SL"
-			break;
-		case "R2"
-			e
-			break;
-		case "R2"
-			break;
+static void armAction(uint8_t cmd[], uint8_t value1){
+	if(strcmp(cmd,"SR")==0){
+		if ((value1>=80) && (value1<=100)){
+			armCmd(EXTENSION,value1);
+		}else if((value1>=170) && (value1<=190)){
+			armCmd(EXTENSION,value1);
+		}else if((value1>=260) && (value1<=280)){
+			armCmd(ROTATE,value1);
+		}else if(((value1>=0) && (value1<=10))||((value1>=350)&&(value1<360))){
+			armCmd(ROTATE,value1);
+		}
+	}
+	if(strcmp(cmd,"SL")==0){
+		int a=0;
+	}
+	if(strcmp(cmd,"R2")==0){
+		int b=0;
+	}
+	if(strcmp(cmd,"R1")==0){
+		int c=0;
 	}
 }

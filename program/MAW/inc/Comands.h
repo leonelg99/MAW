@@ -12,6 +12,7 @@
 #include "../inc/Arm.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 uint8_t executeCmd(uint8_t []);
 
