@@ -27,6 +27,8 @@ static uint8_t goBackward(uint8_t);
 static uint8_t goRelease(void);
 static uint8_t goRotateRight(uint8_t);
 static uint8_t goRotateLeft(uint8_t);
+static uint8_t goTurnRight(uint8_t, uint8_t);
+static uint8_t goTurnLeft(uint8_t, uint8_t);
 
 /******************************************
            LATCH CONTROLLER
@@ -226,6 +228,13 @@ static void run(uint8_t motornum, uint8_t cmd) {
   }
 
   switch (cmd) {
+
+  case BRAKE:
+  	latch_state |= BV(a);
+  	latch_state |= BV(b);
+  	latchTx();
+  	break;
+
   case FORWARD:
     latch_state |= BV(a);
     latch_state &= ~BV(b);
@@ -309,6 +318,76 @@ static uint8_t goRotateLeft(uint8_t speed){
 	return 0;
 }
 
+static uint8_t goBrake(){
+	for(int i=1; i<=4;i++){
+		setSpeed(i,0);
+	}
+	for(int i=1;i<=4;i++){
+		run(i,BRAKE);
+	}
+	return 0;
+}
+
+
+
+static void forwardBasedOnRightSegment(uint8_t speed, uint8_t segmentNumber){
+	for(int i=1; i<=2;i++){
+		setSpeed(i,speed);
+	}
+	for(int i=3; i<=4;i++){
+		setSpeed(i,(speed * (segmentNumber/8)));
+	}
+	for(int i=1;i<=4;i++){
+		run(i,FORWARD);
+	}
+}
+
+static void forwardBasedOnLeftSegment(uint8_t speed, uint8_t segmentNumber){
+	for(int i=1; i<=2;i++){
+		setSpeed(i,(speed * (segmentNumber/8)));
+	}
+	for(int i=3; i<=4;i++){
+		setSpeed(i,speed);
+	}
+	for(int i=1;i<=4;i++){
+		run(i,FORWARD);
+	}
+}
+
+
+// AUX = 0 significa error
+// AUX = 1 es que se ejecutó correctamente
+static uint8_t goTurnRight(uint8_t angle, uint8_t speed){
+	uint8_t aux = 0;
+
+	if(speed < VEL_MIN) speed = VEL_MIN;
+
+	for(int i = 1; i++; i < 8){
+		if(angle <= (i + 1)*10 ){ 						// Pregunta si el ángulo está entre 10 grados y 80 grados
+			forwardBasedOnRightSegment(speed, i);
+			aux = 1;
+		}
+	}
+	return aux;
+}
+
+
+// AUX = 0 significa error
+// AUX = 1 es que se ejecutó correctamente
+static uint8_t goTurnLeft(uint8_t angle, uint8_t speed){
+	uint8_t aux = 0;
+
+	if(speed < VEL_MIN) speed = VEL_MIN;
+
+	for(int i = 1; i++; i < 8){
+		if(angle <= (i + 1 + 9)*10 ){					// Pregunta si el ángulo está entre 100 y 170 grados
+			forwardBasedOnLeftSegment(speed, i);
+			aux = 1;
+		}
+	}
+	return aux;
+}
+
 uint8_t vehicleCmd(uint8_t cmd, uint8_t angle, uint8_t speed){
 	switch (cmd){
 	case FORWARD:
@@ -327,14 +406,17 @@ uint8_t vehicleCmd(uint8_t cmd, uint8_t angle, uint8_t speed){
 		goRotateLeft(speed);
 		break;
 	case TURNRIGHT:
+		goTurnRight(angle, speed);
 		break;
 	case TURNLEFT:
+		goTurnLeft(angle, speed);
 		break;
 	case TURNRIGHTBACKWARD:
 		break;
 	case TURNLEFTBACKWARD:
 		break;
 	case BRAKE:
+		goBrake();
 		break;
 	}
 }
