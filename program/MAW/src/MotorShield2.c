@@ -362,7 +362,7 @@ static uint8_t goTurnRight(uint8_t angle, uint8_t speed){
 
 	if(speed < VEL_MIN) speed = VEL_MIN;
 
-	for(int i = 1; i++; i < 8){
+	for(int i = 1; i < 8;i++){
 		if(angle <= (i + 1)*10 ){ 						// Pregunta si el ángulo está entre 10 grados y 80 grados
 			forwardBasedOnRightSegment(speed, i);
 			aux = 1;
@@ -379,7 +379,7 @@ static uint8_t goTurnLeft(uint8_t angle, uint8_t speed){
 
 	if(speed < VEL_MIN) speed = VEL_MIN;
 
-	for(int i = 1; i++; i < 8){
+	for(int i = 1;i < 8;i++){
 		if(angle <= (i + 1 + 9)*10 ){					// Pregunta si el ángulo está entre 100 y 170 grados
 			forwardBasedOnLeftSegment(speed, i);
 			aux = 1;
