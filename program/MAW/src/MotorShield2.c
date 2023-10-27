@@ -331,11 +331,14 @@ static uint8_t goBrake(){
 
 
 static void forwardBasedOnRightSegment(uint8_t speed, uint8_t segmentNumber){
+	uint8_t aux = speed * (segmentNumber/8);
+	if(aux < VEL_MIN) aux = VEL_MIN;
+
 	for(int i=1; i<=2;i++){
 		setSpeed(i,speed);
 	}
 	for(int i=3; i<=4;i++){
-		setSpeed(i,(speed * (segmentNumber/8)));
+		setSpeed(i,aux);
 	}
 	for(int i=1;i<=4;i++){
 		run(i,FORWARD);
@@ -343,8 +346,11 @@ static void forwardBasedOnRightSegment(uint8_t speed, uint8_t segmentNumber){
 }
 
 static void forwardBasedOnLeftSegment(uint8_t speed, uint8_t segmentNumber){
+	uint8_t aux = speed * (segmentNumber/8);
+	if(aux < VEL_MIN) aux = VEL_MIN;
+
 	for(int i=1; i<=2;i++){
-		setSpeed(i,(speed * (segmentNumber/8)));
+		setSpeed(i,aux);
 	}
 	for(int i=3; i<=4;i++){
 		setSpeed(i,speed);
