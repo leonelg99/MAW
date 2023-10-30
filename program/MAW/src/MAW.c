@@ -10,6 +10,7 @@
 #include "sapi.h"
 #include "../inc/Comands.h"
 #include "../inc/UART.h"
+#include "../inc/MotorShield2.h"
 
 
 /*=====[Definition macros of private constants]==============================*/
@@ -25,17 +26,19 @@
 int main( void )
 {
 	 boardConfig();
-
 	 programInit();
 
 	 uint8_t volatile msg[50]={};
 	 sendMsg(0);
-	 while(1);
+	 while(1){
 
-	 	 if(receiveMsg(msg,strlen(msg))){
+
+	 	if(receiveMsg(msg,strlen(msg))){
 	 		executeCmd(msg);
 	 	 }
 	 	checkPower();
 	 	memset(msg,0,sizeof(msg));
+
+	 }
 	 return 0 ;
 }

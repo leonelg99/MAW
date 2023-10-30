@@ -33,6 +33,9 @@
 #define TURNRIGHTBACKWARD 9
 #define TURNLEFTBACKWARD 10
 
+#define VEL_MIN 150
+#define VEL_MAX 254
+
 // EDU_CIAA_NXP pin names
 #define MOTORLATCH GPIO1
 #define MOTORCLK GPIO7
