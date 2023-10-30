@@ -26,7 +26,7 @@ int main( void )
 {
 	 boardConfig();
 
-	 serialInit();
+	 programInit();
 
 	 uint8_t volatile msg[50]={};
 	 sendMsg(0);
@@ -35,6 +35,7 @@ int main( void )
 	 	 if(receiveMsg(msg,strlen(msg))){
 	 		executeCmd(msg);
 	 	 }
-	 	 memset(msg,0,sizeof(msg));
+	 	checkPower();
+	 	memset(msg,0,sizeof(msg));
 	 return 0 ;
 }

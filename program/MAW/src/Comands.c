@@ -8,10 +8,38 @@
 
 
 static uint8_t MODE=0; //VEHICLE MODE
+static tick_t bateryCounter = 0;
 
 static void decodeMessage(uint8_t [], uint8_t *, uint8_t *, uint8_t *);
 static void motorAction(uint8_t [], uint8_t, uint8_t);
 static void armAction(uint8_t [], uint8_t);
+
+
+void programInit(){
+	adcConfig( ADC_ENABLE ); /* ADC */
+	motorsInit();
+	serialInit();
+
+	tickInit( 1 );
+	tickCallbackSet( taskTrigger, NULL );
+}
+
+static void taskTrigger(){
+	if(bateryCounter == TASK_PERIODICITY)
+		checlPowe();
+}
+static void checkPower(){
+	uint16_t MotorBatery,CIAABatery;
+
+	MotorBatery = adcRead(CH2);
+	CIAABatery = adcRead(CH1);
+
+	if(MotorBatery <= LOWBATERY)
+		sendMsg(1);
+	if(MotorBatery <= LOWBATERY)
+		sendMsg(2);
+
+}
 
 uint8_t executeCmd(uint8_t msg[]){
 	uint8_t cmd[7]={}, value1=0,value2=0;
