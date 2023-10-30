@@ -15,8 +15,8 @@
 #include <stdlib.h>
 
 #define LOWBATERY 1000
-#define TASK_PERIODICITY 60000
 
 uint8_t executeCmd(uint8_t []);
 void programInit(void);
+void checkPower(void);
 #endif /* PROGRAM_MAW_INC_COMANDS_H_ */

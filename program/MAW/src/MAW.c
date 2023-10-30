@@ -29,6 +29,7 @@ int main( void )
 	 programInit();
 
 	 uint8_t volatile msg[50]={};
+	 tick_t tiempoEnTicks = 0;
 	 sendMsg(0);
 	 while(1){
 
@@ -36,7 +37,12 @@ int main( void )
 	 	if(receiveMsg(msg,strlen(msg))){
 	 		executeCmd(msg);
 	 	 }
-	 	checkPower();
+	 	 tiempoEnTicks = tickRead();
+	 	 if( tiempoEnTicks >= 60000 ){
+	 	   	 checkPower();
+	 	     tickWrite(0);
+	 	 }
+
 	 	memset(msg,0,sizeof(msg));
 
 	 }

@@ -8,7 +8,7 @@
 
 
 static uint8_t MODE=0; //VEHICLE MODE
-static tick_t bateryCounter = 0;
+
 
 static void decodeMessage(uint8_t [], uint8_t *, uint8_t *, uint8_t *);
 static void motorAction(uint8_t [], uint8_t, uint8_t);
@@ -19,15 +19,9 @@ void programInit(){
 	adcConfig( ADC_ENABLE ); /* ADC */
 	motorsInit();
 	serialInit();
-
-	tickInit( 1 );
-	tickCallbackSet( taskTrigger, NULL );
+	tickWrite(0);
 }
 
-static void taskTrigger(){
-	if(bateryCounter == TASK_PERIODICITY)
-		checlPowe();
-}
 static void checkPower(){
 	uint16_t MotorBatery,CIAABatery;
 
