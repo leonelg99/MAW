@@ -22,7 +22,7 @@ void programInit(){
 	tickWrite(0);
 }
 
-static void checkPower(){
+void checkPower(){
 	uint16_t MotorBatery,CIAABatery;
 
 	MotorBatery = adcRead(CH2);
