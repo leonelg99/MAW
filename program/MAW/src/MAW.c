@@ -32,18 +32,19 @@ int main( void )
 	 tick_t tiempoEnTicks = 0;
 	 sendMsg(0);
 	 while(1){
+		 sendMsg(0);
+		 delay(100);
 
-
-	 	if(receiveMsg(msg,strlen(msg))){
+	 	/*if(receiveMsg(msg,strlen(msg))){
 	 		executeCmd(msg);
 	 	 }
 	 	 tiempoEnTicks = tickRead();
 	 	 if( tiempoEnTicks >= 60000 ){
-	 	   	 checkPower();
+	 	   	 //checkPower();
 	 	     tickWrite(0);
 	 	 }
 
-	 	memset(msg,0,sizeof(msg));
+	 	memset(msg,0,sizeof(msg));*/
 
 	 }
 	 return 0 ;
