@@ -6,8 +6,11 @@
  */
 #include "../inc/Comands.h"
 
+#define LEDSON gpioWrite( ENET_TXD0 , ON );
+#define LEDSOFF gpioWrite( ENET_TXD0 , OFF );
+#define MARGIN 10
 
-static uint8_t MODE=0; //VEHICLE MODE
+static volatile uint8_t MODE=0,leds=0; //VEHICLE MODE
 
 
 static void decodeMessage(uint8_t [], uint8_t *, uint8_t *, uint8_t *);
@@ -42,6 +45,17 @@ uint8_t executeCmd(uint8_t msg[]){
 
 	if(strcmp(cmd,"MODE")==0){
 		MODE=!MODE;
+		return 0;
+	}
+
+	if(strcmp(cmd,"LEDS")==0){
+		if(leds==0) {
+			LEDSON;
+			leds=!leds;
+		} else{
+			LEDSOFF;
+			leds=!leds;
+		}
 		return 0;
 	}
 
@@ -114,13 +128,13 @@ static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
 
 static void armAction(uint8_t cmd[], uint8_t value1){
 	if(strcmp(cmd,"SR")==0){
-		if ((value1>=80) && (value1<=100)){
+		if ((value1>=90-MARGIN) && (value1<=90+MARGIN)){
 			armCmd(EXTENSION,value1);
-		}else if((value1>=170) && (value1<=190)){
+		}else if((value1>=180-MARGIN) && (value1<=180+MARGIN)){
 			armCmd(EXTENSION,value1);
-		}else if((value1>=260) && (value1<=280)){
+		}else if((value1>=270-MARGIN) && (value1<=270+MARGIN)){
 			armCmd(ROTATE,value1);
-		}else if(((value1>=0) && (value1<=10))||((value1>=350)&&(value1<360))){
+		}else if(((value1>=0) && (value1<=MARGIN))||((value1>=360-MARGIN)&&(value1<360))){
 			armCmd(ROTATE,value1);
 		}
 	}

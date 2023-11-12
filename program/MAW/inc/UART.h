@@ -9,7 +9,9 @@
 #define PROGRAM_MAW_INC_UART_H_
 
 #include "sapi.h"
-
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #define UART UART_232
 
 void serialInit(void);

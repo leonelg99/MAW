@@ -31,11 +31,19 @@ void armInit(){
 	servosInits();
 
 }
-
+/*
+ * This function moved the arm to righ or left based on
+ * the angle in wich the comand has been send.
+ * If it is 180 it moves to left, if it is 0 or 360 to the right, any other is ignored.
+ * In addition, it consider a zone and not the exact value, so 180 acctualy is a
+ * range from 180-MARGIN to 180+Margin, and the same for 360/0.
+ * In the other hand the movement has been limited to avoid breaking the servomotor, so
+ * when you try to move beyond the limit, the comand is ignored, and in it is place a message is send.
+ */
 static void rotate(uint8_t value){
 	angleB = servoRead(SERVO_NB);
-	if((value>=270-MARGIN) && (value<=270+MARGIN)){	//LEFT
-		if(angleB<180)
+	if((value>=180-MARGIN) && (value<=180+MARGIN)){	//LEFT
+		if(angleB<ROTATION_MAX_LEFT)
 			servoWrite(SERVO_NB,(angleB+ANGLE_GAP));
 		else sendMsg(3);
 	}else if(((value>=0) && (value<=10))||((value>=350)&&(value<360))){		//RIGHT
@@ -44,6 +52,8 @@ static void rotate(uint8_t value){
 		 else sendMsg(3);
 	}
 }
+
+
 static void extend(uint8_t value){
 	angleA1 = servoRead(SERVO_NA1);
 	if((value>=90-MARGIN) && (value<=90+MARGIN)){
