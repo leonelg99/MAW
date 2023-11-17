@@ -28,27 +28,28 @@ void serialInit(){
 }
 
 uint8_t receiveMsg(uint8_t * msg, uint8_t length){
-	uint8_t dato  = 0,reading=0,index=0;
+	uint8_t dato  = 0,reading=1,index=0,ready=0;
 	if(uartReadByte(UART,&dato)){
-		if(strcmp((char*)&dato,"\n")){
+		if(dato == '\n'){
 			sendMsg(4);
-			reading = 0;
 		} else{
 			msg[index++]=dato;
 			while(reading){
-				if(index <= length){
+				if(index <= length && (dato != '\n')){
 					if(uartReadByte(UART,&dato)){
 						msg[index++]=dato;
-					}else reading=0;
+					}
 				}else {
+					if(index > length) sendMsg(5);
+					else ready=1;
 					reading=0;
-					sendMsg(5);
+
 				}
 			}
 		}
 	}
 	// Devolver 1 si se obtuvieron todos los bytes, 0 en caso contrario
-	return (reading == 0) ? 1 : 0;
+	return ready;
 }
 
 void sendMsg(uint8_t numMsg){
