@@ -14,7 +14,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LOWBATERY 1000
+#define LOWBATERY 		765
+#define WARNINGBATERY 	644
+#define DEADBATERY 		564
 
 uint8_t executeCmd(uint8_t []);
 void programInit(void);

@@ -10,8 +10,8 @@
 #define LEDSOFF gpioWrite( ENET_TXD0 , OFF );
 #define MARGIN 10
 
-static volatile uint8_t MODE=0,leds=0; //VEHICLE MODE
-
+static volatile uint8_t MODE=0, leds=0; //VEHICLE MODE
+const char m [] = "entre";
 
 static void decodeMessage(uint8_t [], uint8_t *, uint8_t *, uint8_t *);
 static void motorAction(uint8_t [], uint8_t, uint8_t);
@@ -27,28 +27,37 @@ void programInit(){
 
 void checkPower(){
 	uint16_t MotorBatery,CIAABatery;
-
+    char x[20];
 	MotorBatery = adcRead(CH2);
 	CIAABatery = adcRead(CH1);
+	//sprintf(x,"%d",CIAABatery);
+    //uartWriteString( UART,x);
 
 	if(MotorBatery <= LOWBATERY)
 		sendMsg(1);
-	if(MotorBatery <= LOWBATERY)
+	if((CIAABatery <= LOWBATERY) && (CIAABatery > WARNINGBATERY))
 		sendMsg(2);
+	else if((CIAABatery <= WARNINGBATERY) && (CIAABatery > DEADBATERY))
+		sendMsg(3);
+	else if(CIAABatery <= DEADBATERY)
+		sendMsg(4);
 
 }
 
 uint8_t executeCmd(uint8_t msg[]){
 	uint8_t cmd[7]={}, value1=0,value2=0;
 
+	uartWriteString( UART, m);
+	gpioWrite( LED2, ON );
 	decodeMessage(msg,cmd,&value1,&value2);
+	uartWriteString( UART, cmd);
 
-	if(strcmp(cmd,"MODE")==0){
+	if(strcmp(cmd,"SELECT")==0){
 		MODE=!MODE;
 		return 0;
 	}
-
-	if(strcmp(cmd,"LEDS")==0){
+	if(strcmp(cmd,"START")==0){
+		sendMsg(0);
 		if(leds==0) {
 			LEDSON;
 			leds=!leds;
@@ -66,20 +75,19 @@ uint8_t executeCmd(uint8_t msg[]){
 	}
 
 	return 0;
-
-
 }
 
 
 static void decodeMessage(uint8_t msg[], uint8_t * cmd, uint8_t * v1, uint8_t * v2){
 	// Usamos strtok para dividir la cadena en tokens usando ':'
+	    uartWriteString( UART,"Decode\n");
 	    char *token = strtok((char *)msg, ":");
-
+	    uartWriteString( UART,"----\n");
 	    // El primer token es la palabra
 	    if (token != NULL) {
 	        strcpy(cmd, token);
 	    } else {
-	        // Manejar un error si es necesario
+	    	uartWriteString( UART,"ERROR\n");
 	    }
 
 	    // El segundo token es valor1
@@ -88,6 +96,7 @@ static void decodeMessage(uint8_t msg[], uint8_t * cmd, uint8_t * v1, uint8_t * 
 	        *v1 = atoi(token);
 	    } else {
 	        // Manejar un error si es necesario
+	    	uartWriteString( UART,"ERROR 2\n");
 	    }
 
 	    // El tercer token es valor2
@@ -96,6 +105,7 @@ static void decodeMessage(uint8_t msg[], uint8_t * cmd, uint8_t * v1, uint8_t * 
 	        *v2 = atoi(token);
 	    } else {
 	        // Manejar un error si es necesario
+	    	uartWriteString( UART,"ERROR 3\n");
 	    }
 }
 

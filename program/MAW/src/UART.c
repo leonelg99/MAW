@@ -11,7 +11,9 @@
 const uint8_t * messages[]={
 		"EDU-CIAA READY\n",
 		"ALERTA: BATERIA BAJA MOTORES!\n",
-		"ALERTA: BATERIA BAJA EDU-CIAA!\n"
+		"ALERTA: SE ESTA AGOTANDO LA BATERIA DE LA EDU-CIAA!\n",
+		"WARNING: BATERIA BAJA DE LA EDU-CIAA!\n",
+		"WARNING: BATERIA EN ESTADO CRITICO - APAGUE EL SISTEMA!!!\n",
 		"ERROR 1: COMMAND NOT FOUND\n",
 		"ERROR 2: COMMAND WRONG FORMAT\n",
 		"ERROR 3: COMMAND TOO LONG\n",
@@ -31,7 +33,7 @@ uint8_t receiveMsg(uint8_t * msg, uint8_t length){
 	uint8_t dato  = 0,reading=1,index=0,ready=0;
 	if(uartReadByte(UART,&dato)){
 		if(dato == '\n'){
-			sendMsg(4);
+			sendMsg(6);
 		} else{
 			msg[index++]=dato;
 			while(reading){
@@ -40,7 +42,7 @@ uint8_t receiveMsg(uint8_t * msg, uint8_t length){
 						msg[index++]=dato;
 					}
 				}else {
-					if(index > length) sendMsg(5);
+					if(index > length) sendMsg(7);
 					else ready=1;
 					reading=0;
 
