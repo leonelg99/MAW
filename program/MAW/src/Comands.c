@@ -5,7 +5,12 @@
  *      Author: lguer
  */
 #include "../inc/Comands.h"
-
+/*
+ * Private Definitions and Macros
+ * LEDSON/LEDSOFF as their name says are used to turn on/off a couple of leds by
+ * turning ON/OFF ENET_TXD0.
+ * Margin is literaly a margin
+ */
 #define LEDSON gpioWrite( ENET_TXD0 , ON );
 #define LEDSOFF gpioWrite( ENET_TXD0 , OFF );
 #define MARGIN 10
