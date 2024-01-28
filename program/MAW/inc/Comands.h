@@ -19,8 +19,8 @@
  * Public Functions Prototypes
  *
  * excuteCmd(): this function receive a string and according to it, execute different actions.
- * programInit(): this function set the main components and variables for the correct functioning
- * of the system
+ * programInit(): this function config and initialize the main components and variables for
+ * the correct functioning of the system
  * checkPower(): this function read the ADC and check the batteries levels.
  */
 uint8_t executeCmd(uint8_t []);
