@@ -7,13 +7,21 @@
 #include "../inc/Comands.h"
 /*
  * Private Definitions and Macros
- * LEDSON/LEDSOFF as their name says are used to turn on/off a couple of leds by
+ * LEDSON/LEDSOFF: as their name says are used to turn on/off a couple of leds by
  * turning ON/OFF ENET_TXD0.
- * Margin is literally a margin, a value later used to deal with angles operations.
+ * MARGIN: is literally a margin, a value later used to deal with angles operations.
+ * LOWBATERY: the limit from which the battery charge level of the EDU-CIAA is considered low.
+ * WARNINGBATERY: the limit from which the battery charge level of the EDU-CIAA is considered very low.
+ * DEADBATERY: the limit from which the battery charge level of the EDU-CIAA is considered
+ * extremely low, and can cause bad functions and damage.
  */
 #define LEDSON gpioWrite( ENET_TXD0 , ON );
 #define LEDSOFF gpioWrite( ENET_TXD0 , OFF );
 #define MARGIN 10
+#define LOWBATERY 		765
+#define WARNINGBATERY 	644
+#define DEADBATERY 		564
+
 
 /*
  * Private Variables

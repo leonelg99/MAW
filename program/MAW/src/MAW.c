@@ -11,7 +11,9 @@
 #include "../inc/Comands.h"
 #include "../inc/UART.h"
 #include "../inc/MotorShield2.h"
-
+/*
+ * Private Definitions
+ */
 #define MESSAGE_LONG 50
 /*=====[Definition macros of private constants]==============================*/
 
@@ -22,7 +24,12 @@
 /*=====[Definitions of private global variables]=============================*/
 
 /*=====[Main function, program entry point after power on or reset]==========*/
-
+/*
+ * The main function of the program start by calling the functions for setup the system and
+ * initializing the needed variables, and lastly execute a loop (while(true)) where all happen.
+ * The loop essentially do 2 things, execute a command if there is one incoming by uart and every
+ * one minute check the batteries levels.
+ */
 int main( void )
 {
 	 boardConfig();
