@@ -11,14 +11,16 @@
 #define MARGIN 10
 
 static volatile uint8_t MODE=0, leds=0; //VEHICLE MODE
-const char m [] = "entre";
+const char m [] = "Execute\n";
 
-static void decodeMessage(uint8_t [], uint8_t *, uint8_t *, uint8_t *);
+static void decodeMessage(uint8_t [], uint8_t [], uint8_t *, uint8_t *);
 static void motorAction(uint8_t [], uint8_t, uint8_t);
 static void armAction(uint8_t [], uint8_t);
 
 
 void programInit(){
+    gpioInit(ENET_TXD0,GPIO_ENABLE);
+    gpioInit(ENET_TXD0,GPIO_OUTPUT);
 	adcConfig( ADC_ENABLE ); /* ADC */
 	motorsInit();
 	serialInit();
@@ -45,18 +47,22 @@ void checkPower(){
 }
 
 uint8_t executeCmd(uint8_t msg[]){
-	uint8_t cmd[7]={}, value1=0,value2=0;
+	uint8_t cmd[7]="";
+	uint8_t value1=0,value2=0;
 
-	uartWriteString( UART, m);
 	gpioWrite( LED2, ON );
 	decodeMessage(msg,cmd,&value1,&value2);
-	uartWriteString( UART, cmd);
+	if(strcmp(cmd,"")==0) {
+		gpioWrite(LED2,ON);
+		delay(300);
+		gpioWrite(LED2,OFF);
+	}
 
 	if(strcmp(cmd,"SELECT")==0){
 		MODE=!MODE;
 		return 0;
 	}
-	if(strcmp(cmd,"START")==0){
+	if(strcmp(cmd,"Start")==0){
 		sendMsg(0);
 		if(leds==0) {
 			LEDSON;
@@ -74,39 +80,36 @@ uint8_t executeCmd(uint8_t msg[]){
 		armAction(cmd,value1);
 	}
 
-	return 0;
 }
 
+static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint8_t *valor1, uint8_t *valor2) {
+    // Copiamos la cadena para no modificar la original
+    char copia[strlen(cadena) + 1];
+    strcpy(copia, cadena);
 
-static void decodeMessage(uint8_t msg[], uint8_t * cmd, uint8_t * v1, uint8_t * v2){
-	// Usamos strtok para dividir la cadena en tokens usando ':'
-	    uartWriteString( UART,"Decode\n");
-	    char *token = strtok((char *)msg, ":");
-	    uartWriteString( UART,"----\n");
-	    // El primer token es la palabra
-	    if (token != NULL) {
-	        strcpy(cmd, token);
-	    } else {
-	    	uartWriteString( UART,"ERROR\n");
-	    }
+    // Utilizamos strtok para dividir la cadena en tokens utilizando el delimitador ":"
+    char *token = strtok(copia, ":");
 
-	    // El segundo token es valor1
-	    token = strtok(NULL, ":");
-	    if (token != NULL) {
-	        *v1 = atoi(token);
-	    } else {
-	        // Manejar un error si es necesario
-	    	uartWriteString( UART,"ERROR 2\n");
-	    }
+    // La primera palabra
+    if (token != NULL) {
+        strcpy(palabra, token);
+        uartWriteString( UART, token);
+        uartWriteString( UART, "--");
+        uartWriteString( UART, palabra);
+        uartWriteString( UART, "--");
+    }
 
-	    // El tercer token es valor2
-	    token = strtok(NULL, "\n");
-	    if (token != NULL) {
-	        *v2 = atoi(token);
-	    } else {
-	        // Manejar un error si es necesario
-	    	uartWriteString( UART,"ERROR 3\n");
-	    }
+    // El primer valor
+    token = strtok(NULL, ":");
+    if (token != NULL) {
+        sscanf(token, "%hhu", valor1);
+    }
+
+    // El segundo valor
+    token = strtok(NULL, ":");
+    if (token != NULL) {
+        sscanf(token, "%hhu", valor2);
+    }
 }
 
 static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){

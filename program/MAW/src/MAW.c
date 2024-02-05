@@ -13,6 +13,7 @@
 #include "../inc/MotorShield2.h"
 
 #define MESSAGE_LONG 50
+
 /*=====[Definition macros of private constants]==============================*/
 
 /*=====[Definitions of extern global variables]==============================*/
@@ -25,6 +26,7 @@
 
 int main( void )
 {
+
 	 boardConfig();
 	 programInit();
 	 gpioWrite( LED1, OFF );
@@ -34,24 +36,21 @@ int main( void )
 	 tick_t tiempoEnTicks = 0;
 	 sendMsg(0);
 	 uint8_t x=0;
-
 	 while(1){
 		gpioWrite(LED1,OFF);
 	 	if(receiveMsg(msg,MESSAGE_LONG)){
 	 		gpioWrite(LED1,ON);
-	 		//executeCmd(msg);
+	 		executeCmd(msg);
 	 		uartWriteString( UART, msg);
 	 	 }
 
-		 /*uartWriteString(UART,"LPTM!");
-		 delay(1000);*/
 	 	 tiempoEnTicks = tickRead();
 
 	 	 if( tiempoEnTicks >= 60 ){
-	 	   	 checkPower();
+	 	   	 //checkPower();
 	 	     tickWrite(0);
 	 	 }
-	 	memset(msg,0,sizeof(msg));
+	 	memset(msg,'\0',sizeof(msg));
 	 }
 
 
