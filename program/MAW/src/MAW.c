@@ -32,6 +32,7 @@
  * one minute check the batteries levels.
  */
 int main( void )
+
 {
 
 	 boardConfig();
@@ -43,6 +44,9 @@ int main( void )
 	 tick_t tiempoEnTicks = 0;
 	 sendMsg(0);
 	 uint8_t x=0;
+	 gpioInit(ENET_TXD0, GPIO_ENABLE);
+	 gpioInit(ENET_TXD0, GPIO_OUTPUT);
+	 gpioInit(ENET_TXD0, GPIO_OUTPUT);
 	 while(1){
 		gpioWrite(LED1,OFF);
 	 	if(receiveMsg(msg,MESSAGE_LONG)){

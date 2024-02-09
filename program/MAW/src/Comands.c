@@ -50,8 +50,7 @@ static void armAction(uint8_t [], uint8_t);
  * tick.
  */
 void programInit(){
-    gpioInit(ENET_TXD0,GPIO_ENABLE);
-    gpioInit(ENET_TXD0,GPIO_OUTPUT);
+
 	adcConfig( ADC_ENABLE ); /* ADC */
 	motorsInit();
 	serialInit();
@@ -139,6 +138,7 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint8_t *valor1, 
     // Copiamos la cadena para no modificar la original
     char copia[strlen(cadena) + 1];
     strcpy(copia, cadena);
+    float aux=0;
 
     // Utilizamos strtok para dividir la cadena en tokens utilizando el delimitador ":"
     char *token = strtok(copia, ":");
@@ -146,16 +146,13 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint8_t *valor1, 
     // La primera palabra
     if (token != NULL) {
         strcpy(palabra, token);
-        uartWriteString( UART, token);
-        uartWriteString( UART, "--");
-        uartWriteString( UART, palabra);
-        uartWriteString( UART, "--");
     }
 
     // El primer valor
     token = strtok(NULL, ":");
     if (token != NULL) {
-        sscanf(token, "%hhu", valor1);
+        sscanf(token, "%e", aux);
+        valor1=(uint8_t)round(aux);
     }
 
     // El segundo valor
@@ -170,7 +167,7 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint8_t *valor1, 
  */
 static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
 
-	if(strcmp(cmd,"SR")==0){ //SR STICK RIGHT
+	if((strcmp(cmd,"SR")==0) && (value2!=0)){ //SR STICK RIGHT
 
 		if ((value1>=80) && (value1<=100)){
 			vehicleCmd(FORWARD,value1,value2);
