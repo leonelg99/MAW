@@ -43,7 +43,7 @@ const char m [] = "Execute\n";
  */
 static void decodeMessage(uint8_t [], uint8_t [], uint16_t *, uint8_t *);
 static void motorAction(uint8_t [], uint16_t, uint8_t);
-static void armAction(uint8_t [], uint16_t);
+static uint8_t armAction(uint8_t [], uint16_t);
 
 /*
  * programInit(): this function config and initialize ADC, UART, MotoroShield and system
@@ -160,7 +160,9 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint16_t *valor1,
     // El segundo valor
     token = strtok(NULL, ":");
     if (token != NULL) {
-        sscanf(token, "%hhu", valor2);
+    	 unsigned int temp_value;
+    	 sscanf(token, "%u", &temp_value);
+    	 *valor2 = (uint8_t)temp_value;
     }
 }
 /*
@@ -185,10 +187,12 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 			vehicleCmd(TURNLEFT,value1,value2);
 		}else if((value1>190) && (value1<260)){
 			vehicleCmd(TURNLEFTBACKWARD,value1,value2);
-		}else if(((value1<370) && (value1>280)))
+		}else if(((value1<370) && (value1>280))){
 				vehicleCmd(TURNRIGHTBACKWARD,value1,value2);
+		}
 	}else{
-		if(strcmp(cmd,"R2")==0)
+		if((value1==0) && (value2==0)) vehicleCmd(RELEASE,0,0);
+		else if(strcmp(cmd,"R2")==0)
 				vehicleCmd(BRAKE,value1,value2);
 	}
 
@@ -200,49 +204,49 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
  * Value 2 is not used since normally is speed value, which has no sense for the arm.
  */
 static uint8_t armAction(uint8_t cmd[], uint16_t value1){
-
+	uint8_t aux=0;
 	if(strcmp(cmd,"SR")==0){
 		if ((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))){
 			armCmd(EXTENSION,value1);
-		}else if((value1>=(180-MARGIN)) && (value1<=(180+MARGIN))){
-			armCmd(EXTENSION,value1);
 		}else if((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))){
+			armCmd(EXTENSION,value1);
+		}else if((value1>=(180-MARGIN)) && (value1<=(180+MARGIN))){
 			armCmd(ROTATE,value1);
 		}else if(((value1>=0) && (value1<=MARGIN))||((value1>=(360-MARGIN))&&(value1<360))){
 			armCmd(ROTATE,value1);
 		}
-		return 0;
-	}
-	if(strcmp(cmd,"SL")==0){
+		aux=1;
+	}else
+	if(!aux && strcmp(cmd,"SL")==0){
 		if(((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))) ||
 		  ((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))))
 			armCmd(ALTITUDE,value1);
-		return 0;
+		aux=1;
 	}
-	if(strcmp(cmd,"R2")==0){
+	if(!aux && strcmp(cmd,"R2")==0){
 		int b=0;
 		//Close
-		return 0;
+		aux=1;
 	}
-	if(strcmp(cmd,"R1")==0){
+	if(!aux && strcmp(cmd,"R1")==0){
 		int c=0;
 		//Open
-		return 0;
+		aux=1;
 	}
 
-	if(strcmp(cmd,"L1")==0){
+	if(!aux && strcmp(cmd,"L1")==0){
 		//OPEN FULL
-		return 0;
+		aux=1;
 	}
-	if(strcmp(cmd,"L2")==0){
+	if(!aux && strcmp(cmd,"L2")==0){
 		//CLOSE FULL only if full open otherwise servo could be damage
-		return 0;
+		aux=1;
 	}
 
-	if(strcmp(cmd,"SLL")==0){
+	if(!aux && strcmp(cmd,"SLL")==0){
 		//GO HOME FUNCTION
-		return 0;
+		aux=1;
 	}
-
+	delay(500);
 	return 0;
 }

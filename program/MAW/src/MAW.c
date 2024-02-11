@@ -33,6 +33,7 @@
  */
 int main( void )
 
+
 {
 
 	 boardConfig();
@@ -41,6 +42,7 @@ int main( void )
 	 tick_t tiempoEnTicks = 0;
 	 //sendMsg(0);
 	 uint8_t x=0;
+
 
 	 while(1){
 		 gpioWrite(LED1,OFF);
@@ -57,6 +59,11 @@ int main( void )
 		 	 tickWrite(0);
 		 }
 	     memset(msg,'\0',sizeof(msg));
+		 //servoWrite( SERVO2, 0 );
+		 //delay(500);
+
+
+
 	 }
 	 return 0 ;
 }

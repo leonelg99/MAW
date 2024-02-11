@@ -22,7 +22,7 @@
 #define GRIPPER	  	4
 #define HOME		5
 
-#define ANGLE_GAP 			2
+#define ANGLE_GAP 			5
 #define MARGIN 				30
 #define EXTENSION_MAX_ANGLE 180
 #define ELEVATION_MAX_ANGLE 180

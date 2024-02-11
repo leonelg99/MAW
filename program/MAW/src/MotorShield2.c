@@ -8,6 +8,9 @@
 
 #include "../inc/MotorShield2.h"
 
+//MACROS
+
+#define SCALATE(numero) ((uint8_t)((((numero) > 100) ? 100 : (numero)) * 1.0 / 100 * 100 + 155))
 
 //Function Prototypes
 static void latchTx(void);
@@ -497,6 +500,9 @@ static uint8_t goTurnLeft(uint8_t angle, uint8_t speed){
  * "speed" variables are also included in the function call, so they're used when needed to.
  * */
 uint8_t vehicleCmd(uint8_t cmd, uint16_t angle, uint8_t speed){
+
+	uint8_t sp=SCALATE(speed);
+
 	switch (cmd){
 	case FORWARD:
 		goForward(speed);

@@ -19,11 +19,11 @@ static void rotate(uint8_t);
 static void extend(uint8_t);
 
 static void servosInits(){
-
-	servoConfig( SERVO_R, SERVO_ENABLE );
-	servoConfig( SERVO_EX, SERVO_ENABLE );
-	servoConfig( SERVO_E, SERVO_ENABLE );
-	servoConfig( SERVO_G, SERVO_ENABLE );
+	servoConfig( 0, SERVO_ENABLE );
+	servoConfig( SERVO_R,  SERVO_ENABLE_OUTPUT);
+	servoConfig( SERVO_EX, SERVO_ENABLE_OUTPUT);
+	servoConfig( SERVO_E,  SERVO_ENABLE_OUTPUT);
+	servoConfig( SERVO_G,  SERVO_ENABLE_OUTPUT);
 
 }
 
