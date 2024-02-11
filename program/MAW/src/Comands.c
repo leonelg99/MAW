@@ -17,7 +17,7 @@
  */
 #define LEDSON gpioWrite( ENET_TXD0 , ON );
 #define LEDSOFF gpioWrite( ENET_TXD0 , OFF );
-#define MARGIN 10
+#define MARGIN 30
 #define LOWBATERY 		765
 #define WARNINGBATERY 	644
 #define DEADBATERY 		564
@@ -53,6 +53,7 @@ void programInit(){
 
 	adcConfig( ADC_ENABLE ); /* ADC */
 	motorsInit();
+	armInit();
 	serialInit();
 	tickWrite(0);
 }
@@ -71,8 +72,6 @@ void checkPower(){
     char x[20];
 	MotorBatery = adcRead(CH2);
 	CIAABatery = adcRead(CH1);
-	//sprintf(x,"%d",CIAABatery);
-    //uartWriteString( UART,x);
 
 	if(MotorBatery <= LOWBATERY)
 		sendMsg(1);
@@ -200,25 +199,50 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
  * and it according to value1 (angle).
  * Value 2 is not used since normally is speed value, which has no sense for the arm.
  */
-static void armAction(uint8_t cmd[], uint16_t value1){
+static uint8_t armAction(uint8_t cmd[], uint16_t value1){
+
 	if(strcmp(cmd,"SR")==0){
-		if ((value1>=90-MARGIN) && (value1<=90+MARGIN)){
+		if ((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))){
 			armCmd(EXTENSION,value1);
-		}else if((value1>=180-MARGIN) && (value1<=180+MARGIN)){
+		}else if((value1>=(180-MARGIN)) && (value1<=(180+MARGIN))){
 			armCmd(EXTENSION,value1);
-		}else if((value1>=270-MARGIN) && (value1<=270+MARGIN)){
+		}else if((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))){
 			armCmd(ROTATE,value1);
-		}else if(((value1>=0) && (value1<=MARGIN))||((value1>=360-MARGIN)&&(value1<360))){
+		}else if(((value1>=0) && (value1<=MARGIN))||((value1>=(360-MARGIN))&&(value1<360))){
 			armCmd(ROTATE,value1);
 		}
+		return 0;
 	}
 	if(strcmp(cmd,"SL")==0){
-		int a=0;
+		if(((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))) ||
+		  ((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))))
+			armCmd(ALTITUDE,value1);
+		return 0;
 	}
 	if(strcmp(cmd,"R2")==0){
 		int b=0;
+		//Close
+		return 0;
 	}
 	if(strcmp(cmd,"R1")==0){
 		int c=0;
+		//Open
+		return 0;
 	}
+
+	if(strcmp(cmd,"L1")==0){
+		//OPEN FULL
+		return 0;
+	}
+	if(strcmp(cmd,"L2")==0){
+		//CLOSE FULL only if full open otherwise servo could be damage
+		return 0;
+	}
+
+	if(strcmp(cmd,"SLL")==0){
+		//GO HOME FUNCTION
+		return 0;
+	}
+
+	return 0;
 }
