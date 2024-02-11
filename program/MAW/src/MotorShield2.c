@@ -496,7 +496,7 @@ static uint8_t goTurnLeft(uint8_t angle, uint8_t speed){
  * the requirements made by the "cmd" command. Although they're not always used, the "angle" and
  * "speed" variables are also included in the function call, so they're used when needed to.
  * */
-uint8_t vehicleCmd(uint8_t cmd, uint8_t angle, uint8_t speed){
+uint8_t vehicleCmd(uint8_t cmd, uint16_t angle, uint8_t speed){
 	switch (cmd){
 	case FORWARD:
 		goForward(speed);

@@ -41,9 +41,9 @@ const char m [] = "Execute\n";
  * armAction(): like the previous function, this operates the robotic arm according to
  * the command received and the configuration parameters.
  */
-static void decodeMessage(uint8_t [], uint8_t [], uint8_t *, uint8_t *);
-static void motorAction(uint8_t [], uint8_t, uint8_t);
-static void armAction(uint8_t [], uint8_t);
+static void decodeMessage(uint8_t [], uint8_t [], uint16_t *, uint8_t *);
+static void motorAction(uint8_t [], uint16_t, uint8_t);
+static void armAction(uint8_t [], uint16_t);
 
 /*
  * programInit(): this function config and initialize ADC, UART, MotoroShield and system
@@ -96,7 +96,8 @@ void checkPower(){
  */
 uint8_t executeCmd(uint8_t msg[]){
 	uint8_t cmd[7]="";
-	uint8_t value1=0,value2=0;
+	uint16_t value1=0;
+	uint8_t value2=0;
 
 	gpioWrite( LED2, ON );
 	decodeMessage(msg,cmd,&value1,&value2);
@@ -106,8 +107,11 @@ uint8_t executeCmd(uint8_t msg[]){
 		gpioWrite(LED2,OFF);
 	}
 
-	if(strcmp(cmd,"SELECT")==0){
+	if(strcmp(cmd,"Select")==0){
 		MODE=!MODE;
+		if (MODE == 1)
+			sendMsg(9);
+		else sendMsg(10);
 		return 0;
 	}
 	if(strcmp(cmd,"Start")==0){
@@ -127,14 +131,14 @@ uint8_t executeCmd(uint8_t msg[]){
 	}else{
 		armAction(cmd,value1);
 	}
-
+    return 0;
 }
 
 /*
  * decodeMessage(): this function is used to split the message (msg) into 3 variables,
  * cmd, v1, and v2.
  */
-static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint8_t *valor1, uint8_t *valor2) {
+static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint16_t *valor1, uint8_t *valor2) {
     // Copiamos la cadena para no modificar la original
     char copia[strlen(cadena) + 1];
     strcpy(copia, cadena);
@@ -151,8 +155,7 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint8_t *valor1, 
     // El primer valor
     token = strtok(NULL, ":");
     if (token != NULL) {
-        sscanf(token, "%e", aux);
-        valor1=(uint8_t)round(aux);
+        sscanf(token, "%hu", valor1);
     }
 
     // El segundo valor
@@ -165,7 +168,7 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint8_t *valor1, 
  * motorAction(): this function order the motors to execute an action depending cmd,
  * and it according to value1 and value2 (angle and speed).
  */
-static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
+static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 
 	if((strcmp(cmd,"SR")==0) && (value2!=0)){ //SR STICK RIGHT
 
@@ -197,7 +200,7 @@ static void motorAction(uint8_t cmd[], uint8_t value1, uint8_t value2){
  * and it according to value1 (angle).
  * Value 2 is not used since normally is speed value, which has no sense for the arm.
  */
-static void armAction(uint8_t cmd[], uint8_t value1){
+static void armAction(uint8_t cmd[], uint16_t value1){
 	if(strcmp(cmd,"SR")==0){
 		if ((value1>=90-MARGIN) && (value1<=90+MARGIN)){
 			armCmd(EXTENSION,value1);

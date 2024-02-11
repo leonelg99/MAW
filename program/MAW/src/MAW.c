@@ -37,33 +37,26 @@ int main( void )
 
 	 boardConfig();
 	 programInit();
-	 gpioWrite( LED1, OFF );
-	 gpioWrite( LED2, OFF );
-	 gpioWrite( LED3, OFF );
 	 uint8_t volatile msg[MESSAGE_LONG]={};
 	 tick_t tiempoEnTicks = 0;
-	 sendMsg(0);
+	 //sendMsg(0);
 	 uint8_t x=0;
-	 gpioInit(ENET_TXD0, GPIO_ENABLE);
-	 gpioInit(ENET_TXD0, GPIO_OUTPUT);
-	 gpioInit(ENET_TXD0, GPIO_OUTPUT);
+
 	 while(1){
-		gpioWrite(LED1,OFF);
-	 	if(receiveMsg(msg,MESSAGE_LONG)){
-	 		gpioWrite(LED1,ON);
+		 gpioWrite(LED1,OFF);
+		 if(receiveMsg(msg,MESSAGE_LONG)){
+			gpioWrite(LED1,ON);
 	 		executeCmd(msg);
 	 		uartWriteString( UART, msg);
 	 	 }
 
-	 	 tiempoEnTicks = tickRead();
+		 tiempoEnTicks = tickRead();
 
 	 	 if( tiempoEnTicks >= 60 ){
-	 	   	 //checkPower();
-	 	     tickWrite(0);
-	 	 }
-	 	memset(msg,'\0',sizeof(msg));
+	 		 //checkPower();
+		 	 tickWrite(0);
+		 }
+	     memset(msg,'\0',sizeof(msg));
 	 }
-
-
 	 return 0 ;
 }

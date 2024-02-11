@@ -43,7 +43,7 @@
 #define MOTORDATA GPIO3
 
 void motorsInit(void);
-uint8_t vehicleCmd(uint8_t cmd, uint8_t angles, uint8_t speed);
+uint8_t vehicleCmd(uint8_t cmd, uint16_t angles, uint8_t speed);
 
 
 #endif /* PROGRAM_MAW_INC_MOTORSHIELD2_H_ */
