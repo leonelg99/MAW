@@ -75,6 +75,31 @@ static void elevation(uint8_t value){
 
 }
 
+static void gripper(uint16_t value){
+	if(value < 2){
+		angleG = servoRead(SERVO_G);
+		if(value == 0){
+			if(angleG>0)
+				servoWrite(SERVO_G,angleG+ANGLE_GAP);
+			else sendMsg(12);
+		}else{
+			if(angleG<90)
+				servoWrite(SERVO_G,angleG-ANGLE_GAP);
+			else sendMsg(13);
+		}
+	}else {
+		if(value == 2){
+			if(angleG < 90)
+				servoWrite(SERVO_G,90);
+			else sendMsg(13);
+		}else{
+			if(angleG > 0)
+				servoWrite(SERVO_G,0);
+			else sendMsg(12);
+		}
+	}
+}
+
 void armCmd(uint8_t cmd, uint16_t value){
 
 	switch(cmd){
@@ -88,6 +113,7 @@ void armCmd(uint8_t cmd, uint16_t value){
 		elevation(value);
 		break;
 	case GRIPPER:
+		gripper(value);
 		break;
 	case HOME:
 		break;

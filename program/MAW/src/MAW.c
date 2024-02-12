@@ -14,7 +14,7 @@
 /*
  * Private Definitions
  */
-#define MESSAGE_LONG 50
+#define MESSAGE_LONG 30
 
 /*=====[Definition macros of private constants]==============================*/
 

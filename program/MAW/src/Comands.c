@@ -21,7 +21,7 @@
 #define LOWBATERY 		765
 #define WARNINGBATERY 	644
 #define DEADBATERY 		564
-
+#define MESSAGE_LONG 30
 
 /*
  * Private Variables
@@ -43,8 +43,8 @@ const char m [] = "Execute\n";
  */
 static void decodeMessage(uint8_t [], uint8_t [], uint16_t *, uint8_t *);
 static void motorAction(uint8_t [], uint16_t, uint8_t);
-static uint8_t armAction(uint8_t [], uint16_t);
-
+static void armAction(uint8_t [], uint16_t);
+static void stickAction (uint8_t [], uint16_t , uint8_t);
 /*
  * programInit(): this function config and initialize ADC, UART, MotoroShield and system
  * tick.
@@ -203,43 +203,47 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
  * and it according to value1 (angle).
  * Value 2 is not used since normally is speed value, which has no sense for the arm.
  */
-static uint8_t armAction(uint8_t cmd[], uint16_t value1){
-	uint8_t aux=0;
-	if(strcmp(cmd,"SR")==0){
-		if ((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))){
-			armCmd(EXTENSION,value1);
-		}else if((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))){
-			armCmd(EXTENSION,value1);
-		}else if((value1>=(180-MARGIN)) && (value1<=(180+MARGIN))){
-			armCmd(ROTATE,value1);
-		}else if(((value1>=0) && (value1<=MARGIN))||((value1>=(360-MARGIN))&&(value1<360))){
-			armCmd(ROTATE,value1);
+static void armAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
+
+	uint8_t aux=0,stop=0;
+	uint8_t cmd2[7]="";
+	uint16_t value10=0;
+	uint8_t value20=0;
+	uint8_t msg[MESSAGE_LONG]={};
+
+	if(((strcmp(cmd,"SR")==0) || (strcmp(cmd,"SL")==0)) && (value2 != 0) ){
+		while(!stop){
+				 stickAction(cmd,value1,value2);
+				 delay(500);
+				 if(receiveMsg(msg,MESSAGE_LONG)){
+					 decodeMessage(msg,cmd2,value10,value20);
+					 if((strcmp(cmd2,"SR") || (strcmp(cmd2,"SL"))) && (value10==0) && (value20==0))
+						 stop=!stop;
+					 memset(msg,'\0',sizeof(msg));
+				 }
+			}
+		aux=1;
 		}
-		aux=1;
-	}else
-	if(!aux && strcmp(cmd,"SL")==0){
-		if(((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))) ||
-		  ((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))))
-			armCmd(ALTITUDE,value1);
-		aux=1;
-	}
+
 	if(!aux && strcmp(cmd,"R2")==0){
-		int b=0;
 		//Close
+		armCmd(GRIPPER,0);
 		aux=1;
 	}
 	if(!aux && strcmp(cmd,"R1")==0){
-		int c=0;
-		//Open
+		//OPEN
+		armCmd(GRIPPER,1);
 		aux=1;
 	}
 
 	if(!aux && strcmp(cmd,"L1")==0){
 		//OPEN FULL
+		amdCmd(GRIPPER,2);
 		aux=1;
 	}
 	if(!aux && strcmp(cmd,"L2")==0){
 		//CLOSE FULL only if full open otherwise servo could be damage
+		amdCmd(GRIPPER,3);
 		aux=1;
 	}
 
@@ -248,5 +252,23 @@ static uint8_t armAction(uint8_t cmd[], uint16_t value1){
 		aux=1;
 	}
 	delay(500);
-	return 0;
+
+}
+
+static void stickAction (uint8_t cmd[], uint16_t value1, uint8_t value2){
+	if(strcmp(cmd,"SR")==0){
+		if ((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))){
+				armCmd(EXTENSION,value1);
+		}else if((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))){
+				armCmd(EXTENSION,value1);
+		}else if((value1>=(180-MARGIN)) && (value1<=(180+MARGIN))){
+				armCmd(ROTATE,value1);
+		}else if(((value1>=0) && (value1<=MARGIN))||((value1>=(360-MARGIN))&&(value1<360))){
+				armCmd(ROTATE,value1);
+		}
+	 }else
+		if(!aux && strcmp(cmd,"SL")==0){
+			if(((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))) || ((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))))
+				armCmd(ALTITUDE,value1);
+			}
 }
