@@ -43,7 +43,7 @@ const char m [] = "Execute\n";
  */
 static void decodeMessage(uint8_t [], uint8_t [], uint16_t *, uint8_t *);
 static void motorAction(uint8_t [], uint16_t, uint8_t);
-static void armAction(uint8_t [], uint16_t);
+static void armAction(uint8_t [], uint16_t, uint8_t);
 static void stickAction (uint8_t [], uint16_t , uint8_t);
 /*
  * programInit(): this function config and initialize ADC, UART, MotoroShield and system
@@ -128,7 +128,7 @@ uint8_t executeCmd(uint8_t msg[]){
 	if(!MODE){
 		motorAction(cmd,value1,value2);
 	}else{
-		armAction(cmd,value1);
+		armAction(cmd,value1,value2);
 	}
     return 0;
 }
@@ -191,9 +191,7 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 				vehicleCmd(TURNRIGHTBACKWARD,value1,value2);
 		}
 	}else{
-		if((value1==0) && (value2==0)) vehicleCmd(RELEASE,0,0);
-		else if(strcmp(cmd,"R2")==0)
-				vehicleCmd(BRAKE,value1,value2);
+		if(((value1==0) && (value2==0)) || (strcmp(cmd,"R2")==0)) vehicleCmd(BRAKE,0,0);
 	}
 
 }
@@ -216,7 +214,7 @@ static void armAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 				 stickAction(cmd,value1,value2);
 				 delay(500);
 				 if(receiveMsg(msg,MESSAGE_LONG)){
-					 decodeMessage(msg,cmd2,value10,value20);
+					 decodeMessage(msg,cmd2,&value10,&value20);
 					 if((strcmp(cmd2,"SR") || (strcmp(cmd2,"SL"))) && (value10==0) && (value20==0))
 						 stop=!stop;
 					 memset(msg,'\0',sizeof(msg));
@@ -238,12 +236,12 @@ static void armAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 
 	if(!aux && strcmp(cmd,"L1")==0){
 		//OPEN FULL
-		amdCmd(GRIPPER,2);
+		armCmd(GRIPPER,2);
 		aux=1;
 	}
 	if(!aux && strcmp(cmd,"L2")==0){
 		//CLOSE FULL only if full open otherwise servo could be damage
-		amdCmd(GRIPPER,3);
+		armCmd(GRIPPER,3);
 		aux=1;
 	}
 
@@ -267,7 +265,7 @@ static void stickAction (uint8_t cmd[], uint16_t value1, uint8_t value2){
 				armCmd(ROTATE,value1);
 		}
 	 }else
-		if(!aux && strcmp(cmd,"SL")==0){
+		if(strcmp(cmd,"SL")==0){
 			if(((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))) || ((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))))
 				armCmd(ALTITUDE,value1);
 			}

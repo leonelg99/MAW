@@ -321,7 +321,9 @@ static void run(uint8_t motornum, uint8_t cmd) {
  * */
 static uint8_t goForward(uint8_t speed){
 	for(int i=1; i<=4;i++){
-		setSpeed(i,speed);
+		if(i==2) setSpeed(i,((speed*80)/100));
+		else if(i==1) setSpeed(i,((speed*120)/100));
+		else setSpeed(i,speed);
 	}
 	for(int i=1;i<=4;i++){
 		run(i,FORWARD);
@@ -336,9 +338,13 @@ static uint8_t goBackward(uint8_t speed){
 	for(int i=1; i<=4;i++){
 		setSpeed(i,speed);
 	}
-	for(int i=1;i<=4;i++){
-		run(i,BACKWARD);
-	}
+
+	run(1,BACKWARD);
+	delay(10);
+	run(3,BACKWARD);
+	run(4,BACKWARD);
+	delay(30);
+	run(2,BACKWARD);
 }
 
 
