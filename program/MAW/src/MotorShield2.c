@@ -45,35 +45,20 @@ uint8_t latch_state=0;
  * */
 static void latchTx(void) {
   uint8_t i;
-
-  //LATCH_PORT &= ~BV(LATCH);
-  //digitalWrite(MOTORLATCH, LOW);
   gpioWrite(MOTORLATCH, LOW);
-
-  //SER_PORT &= ~BV(SER);
-  //digitalWrite(MOTORDATA, LOW);
   gpioWrite(MOTORDATA, LOW);
 
   for (i=0; i<8; i++) {
-    //CLK_PORT &= ~BV(CLK);
-    //digitalWrite(MOTORCLK, LOW);
-	  gpioWrite(MOTORCLK, LOW);
+	gpioWrite(MOTORCLK, LOW);
 
-    if (latch_state & BV(7-i)) {
-      //SER_PORT |= BV(SER);
-      //digitalWrite(MOTORDATA, HIGH);
+	if (latch_state & BV(7-i)) {
     	gpioWrite(MOTORDATA, HIGH);
     } else {
-      //SER_PORT &= ~BV(SER);
-      //digitalWrite(MOTORDATA, LOW);
     	gpioWrite(MOTORDATA, LOW);
     }
-    //CLK_PORT |= BV(CLK);
-    //digitalWrite(MOTORCLK, HIGH);
     gpioWrite(MOTORCLK, HIGH);
+
   }
-  //LATCH_PORT |= BV(LATCH);
-  //digitalWrite(MOTORLATCH, HIGH);
   gpioWrite(MOTORLATCH, HIGH);
 }
 
@@ -83,29 +68,16 @@ static void latchTx(void) {
  * */
 static void motorsEnable(void) {
   // setup the latch
-  /*
-  LATCH_DDR |= BV(LATCH);
-  ENABLE_DDR |= BV(ENABLE);
-  CLK_DDR |= BV(CLK);
-  SER_DDR |= BV(SER);
-  */
   gpioInit(MOTORLATCH,GPIO_OUTPUT);
   gpioInit(MOTORENABLE,GPIO_OUTPUT);
   gpioInit(MOTORDATA,GPIO_OUTPUT);
   gpioInit(MOTORCLK,GPIO_OUTPUT);
 
-  //pinMode(MOTORLATCH, OUTPUT);
-  //pinMode(MOTORENABLE, OUTPUT);
-  //pinMode(MOTORDATA, OUTPUT);
-  //pinMode(MOTORCLK, OUTPUT);
-
   latch_state = 0;
 
   latchTx();  // "reset"
 
-  //ENABLE_PORT &= ~BV(ENABLE); // enable the chip outputs!
-  //digitalWrite(MOTORENABLE, LOW);
-  gpioWrite(MOTORENABLE,LOW);
+  gpioWrite(MOTORENABLE,LOW); // enable the chip outputs!
 }
 
 
@@ -321,7 +293,9 @@ static void run(uint8_t motornum, uint8_t cmd) {
  * */
 static uint8_t goForward(uint8_t speed){
 	for(int i=1; i<=4;i++){
-		setSpeed(i,speed);
+		if(i==2) setSpeed(i,((speed*80)/100));
+		else if(i==1) setSpeed(i,((speed*120)/100));
+		else setSpeed(i,speed);
 	}
 	for(int i=1;i<=4;i++){
 		run(i,FORWARD);
@@ -336,9 +310,13 @@ static uint8_t goBackward(uint8_t speed){
 	for(int i=1; i<=4;i++){
 		setSpeed(i,speed);
 	}
-	for(int i=1;i<=4;i++){
-		run(i,BACKWARD);
-	}
+
+	run(1,BACKWARD);
+	delay(10);
+	run(3,BACKWARD);
+	run(4,BACKWARD);
+	delay(30);
+	run(2,BACKWARD);
 }
 
 

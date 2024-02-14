@@ -43,7 +43,7 @@ const char m [] = "Execute\n";
  */
 static void decodeMessage(uint8_t [], uint8_t [], uint16_t *, uint8_t *);
 static void motorAction(uint8_t [], uint16_t, uint8_t);
-static void armAction(uint8_t [], uint16_t);
+static void armAction(uint8_t [], uint16_t, uint8_t);
 static void stickAction (uint8_t [], uint16_t , uint8_t);
 /*
  * programInit(): this function config and initialize ADC, UART, MotoroShield and system
@@ -128,7 +128,7 @@ uint8_t executeCmd(uint8_t msg[]){
 	if(!MODE){
 		motorAction(cmd,value1,value2);
 	}else{
-		armAction(cmd,value1);
+		armAction(cmd,value1,value2);
 	}
     return 0;
 }
@@ -169,34 +169,44 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint16_t *valor1,
  * motorAction(): this function order the motors to execute an action depending cmd,
  * and it according to value1 and value2 (angle and speed).
  */
+
 static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
-
-	if((strcmp(cmd,"SR")==0) && (value2!=0)){ //SR STICK RIGHT
-
-		if ((value1>=80) && (value1<=100)){
-			vehicleCmd(FORWARD,value1,value2);
-		}else if((value1>=170) && (value1<=190)){
-			vehicleCmd(ROTATELEFT,value1,value2);
-		}else if((value1>=260) && (value1<=280)){
-			vehicleCmd(BACKWARD,value1,value2);
-		}else if(((value1>=0) && (value1<=10))||((value1>=350)&&(value1<360))){
-			vehicleCmd(ROTATERIGHT,value1,value2);
-		}else if ((value1<80) && (value1>10)){
-			vehicleCmd(TURNRIGHT,value1,value2);
-		}else if((value1>100) && (value1<170)){
-			vehicleCmd(TURNLEFT,value1,value2);
-		}else if((value1>190) && (value1<260)){
-			vehicleCmd(TURNLEFTBACKWARD,value1,value2);
-		}else if(((value1<370) && (value1>280))){
-				vehicleCmd(TURNRIGHTBACKWARD,value1,value2);
-		}
-	}else{
-		if((value1==0) && (value2==0)) vehicleCmd(RELEASE,0,0);
-		else if(strcmp(cmd,"R2")==0)
-				vehicleCmd(BRAKE,value1,value2);
+	if(strcmp(cmd,"R2")==0){
+		vehicleCmd(BRAKE,value1,value2);
 	}
+	else if ((value1==0) && (value2==0)){
+		vehicleCmd(RELEASE,0,0);
+	}
+	else{
+		if((strcmp(cmd,"SR")==0) && (value2!=0)){ //SR STICK RIGHT
+			if ((value1>=80) && (value1<=100)){
+				vehicleCmd(FORWARD,value1,value2);
 
+			}else if((value1>=170) && (value1<=190)){
+				vehicleCmd(ROTATELEFT,value1,value2);
+
+			}else if((value1>=260) && (value1<=280)){
+				vehicleCmd(BACKWARD,value1,value2);
+
+			}else if(((value1>=0) && (value1<=10))||((value1>=350)&&(value1<360))){
+				vehicleCmd(ROTATERIGHT,value1,value2);
+
+			}else if ((value1<80) && (value1>10)){
+				vehicleCmd(TURNRIGHT,value1,value2);
+
+			}else if((value1>100) && (value1<170)){
+				vehicleCmd(TURNLEFT,value1,value2);
+
+			}else if((value1>190) && (value1<260)){
+				vehicleCmd(TURNLEFTBACKWARD,value1,value2);
+
+			}else if(((value1<370) && (value1>280))){
+				vehicleCmd(TURNRIGHTBACKWARD,value1,value2);
+			}
+		}
+	}
 }
+
 
 /*
  * armAction(): this function order the arm to execute an action depending cmd,
@@ -216,7 +226,7 @@ static void armAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 				 stickAction(cmd,value1,value2);
 				 delay(500);
 				 if(receiveMsg(msg,MESSAGE_LONG)){
-					 decodeMessage(msg,cmd2,value10,value20);
+					 decodeMessage(msg,cmd2,&value10,&value20);
 					 if((strcmp(cmd2,"SR") || (strcmp(cmd2,"SL"))) && (value10==0) && (value20==0))
 						 stop=!stop;
 					 memset(msg,'\0',sizeof(msg));
@@ -238,12 +248,12 @@ static void armAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 
 	if(!aux && strcmp(cmd,"L1")==0){
 		//OPEN FULL
-		amdCmd(GRIPPER,2);
+		armCmd(GRIPPER,2);
 		aux=1;
 	}
 	if(!aux && strcmp(cmd,"L2")==0){
 		//CLOSE FULL only if full open otherwise servo could be damage
-		amdCmd(GRIPPER,3);
+		armCmd(GRIPPER,3);
 		aux=1;
 	}
 
@@ -266,7 +276,7 @@ static void stickAction (uint8_t cmd[], uint16_t value1, uint8_t value2){
 				armCmd(ROTATE,value1);
 		}
 	 }else
-		if(!aux && strcmp(cmd,"SL")==0){
+		if(strcmp(cmd,"SL")==0){
 			if(((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))) || ((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))))
 				armCmd(ALTITUDE,value1);
 			}
