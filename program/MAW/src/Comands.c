@@ -169,35 +169,7 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint16_t *valor1,
  * motorAction(): this function order the motors to execute an action depending cmd,
  * and it according to value1 and value2 (angle and speed).
  */
-static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 
-	if((strcmp(cmd,"SR")==0) && (value2!=0)){ //SR STICK RIGHT
-
-		if ((value1>=80) && (value1<=100)){
-			vehicleCmd(FORWARD,value1,value2);
-		}else if((value1>=170) && (value1<=190)){
-			vehicleCmd(ROTATELEFT,value1,value2);
-		}else if((value1>=260) && (value1<=280)){
-			vehicleCmd(BACKWARD,value1,value2);
-		}else if(((value1>=0) && (value1<=10))||((value1>=350)&&(value1<360))){
-			vehicleCmd(ROTATERIGHT,value1,value2);
-		}else if ((value1<80) && (value1>10)){
-			vehicleCmd(TURNRIGHT,value1,value2);
-		}else if((value1>100) && (value1<170)){
-			vehicleCmd(TURNLEFT,value1,value2);
-		}else if((value1>190) && (value1<260)){
-			vehicleCmd(TURNLEFTBACKWARD,value1,value2);
-		}else if(((value1<370) && (value1>280))){
-				vehicleCmd(TURNRIGHTBACKWARD,value1,value2);
-		}
-	}else{
-		if(((value1==0) && (value2==0)) || (strcmp(cmd,"R2")==0)) vehicleCmd(BRAKE,0,0);
-	}
-
-}
-
-//------------------------------------------------------------------------------------------------
-/*
 static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 	if(strcmp(cmd,"R2")==0){
 		vehicleCmd(BRAKE,value1,value2);
@@ -234,8 +206,7 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 		}
 	}
 }
-*/
-//------------------------------------------------------------------------------------------------
+
 
 /*
  * armAction(): this function order the arm to execute an action depending cmd,
