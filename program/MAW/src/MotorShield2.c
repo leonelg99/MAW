@@ -443,6 +443,7 @@ static uint8_t goTurnRight(uint8_t angle, uint8_t speed){
 		if(angle <= (i + 1)*10 ){ 			// Pregunta si el ángulo está entre 10 grados y 80 grados
 			forwardBasedOnRightSegment(speed, i);
 			aux = 1;
+			break;
 		}
 	}
 	return aux;
@@ -466,10 +467,103 @@ static uint8_t goTurnLeft(uint8_t angle, uint8_t speed){
 		if(angle <= (i + 1 + 9)*10 ){		// Pregunta si el ángulo está entre 100 y 170 grados
 			forwardBasedOnLeftSegment(speed, i);
 			aux = 1;
+			break;
 		}
 	}
 	return aux;
 }
+
+
+//---------------------------------------------------------------------
+/*
+ * backwardBasedOnRightSegment(speed, segmentNumber): makes the robot move backwards while turning to
+ * its right. The turning angle is determined by "segmentNumber" and the speed in which turns its
+ * between "speed * 1/8" and "speed * 7/8".
+ * */
+static void backwardBasedOnRightSegment(uint8_t speed, uint8_t segmentNumber){
+	uint8_t aux = speed * (segmentNumber/8);
+	if(aux < VEL_MIN) aux = VEL_MIN;
+
+	for(int i=1; i<=2;i++){
+		setSpeed(i,speed);
+	}
+	for(int i=3; i<=4;i++){
+		setSpeed(i,aux);
+	}
+	for(int i=1;i<=4;i++){
+		run(i,BACKWARD);
+	}
+}
+
+
+/*
+ * backwardBasedOnLeftSegment(speed, segmentNumber): makes the robot move backwards while turning to
+ * its left. The turning angle is determined by "segmentNumber" and the speed in which turns its
+ * between "speed * 1/8" and "speed * 7/8".
+ * */
+static void backwardBasedOnLeftSegment(uint8_t speed, uint8_t segmentNumber){
+	uint8_t aux = speed * (segmentNumber/8);
+	if(aux < VEL_MIN) aux = VEL_MIN;
+
+	for(int i=1; i<=2;i++){
+		setSpeed(i,aux);
+	}
+	for(int i=3; i<=4;i++){
+		setSpeed(i,speed);
+	}
+	for(int i=1;i<=4;i++){
+		run(i,BACKWARD);
+	}
+}
+
+
+// AUX = 0 significa error
+// AUX = 1 es que se ejecutó correctamente
+
+/*
+ * goTurnRightBackward(angle, speed): determines the aforementioned "segmentNumber" that the
+ * backwardBasedOnRightSegment function will use. The segmentations of the possible angles
+ * is done by diving the range between 280° to 350° in 8 segments.
+ * */
+static uint8_t goTurnRightBackward(uint8_t angle, uint8_t speed){
+	uint8_t aux = 0;
+
+	if(speed < VEL_MIN) speed = VEL_MIN;
+
+	for(int i = 1; i < 8;i++){
+		if(angle <= (i + 1 + 27)*10 ){ 			// Pregunta si el ángulo está entre 280 grados y 350 grados
+			backwardBasedOnRightSegment(speed, i);
+			aux = 1;
+			break;
+		}
+	}
+	return aux;
+}
+
+
+// AUX = 0 significa error
+// AUX = 1 es que se ejecutó correctamente
+
+/*
+ * goTurnLeftBackward(angle, speed): determines the aforementioned "segmentNumber" that the
+ * backwardBasedOnLeftSegment function will use. The segmentations of the possible angles
+ * is done by diving the range between 190° to 260° in 8 segments.
+ * */
+static uint8_t goTurnLeftBackward(uint8_t angle, uint8_t speed){
+	uint8_t aux = 0;
+
+	if(speed < VEL_MIN) speed = VEL_MIN;
+
+	for(int i = 1;i < 8;i++){
+		if(angle <= (i + 1 + 18)*10 ){		// Pregunta si el ángulo está entre 190 y 260 grados
+			backwardBasedOnLeftSegment(speed, i);
+			aux = 1;
+			break;
+		}
+	}
+	return aux;
+}
+//---------------------------------------------------------------------
 
 
 /*
@@ -504,8 +598,10 @@ uint8_t vehicleCmd(uint8_t cmd, uint16_t angle, uint8_t speed){
 		goTurnLeft(angle, speed);
 		break;
 	case TURNRIGHTBACKWARD:
+		goTurnRightBackward(angle, speed);
 		break;
 	case TURNLEFTBACKWARD:
+		goTurnLeftBackward(angle, speed);
 		break;
 	case BRAKE:
 		goBrake();
