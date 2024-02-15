@@ -9,8 +9,8 @@
 
 //Actual position of servo motors
 static uint8_t angleR=0;
-static uint8_t angleA1=0;
-static uint8_t angleA2=0;
+static uint8_t angleEX=0;
+static uint8_t angleE=0;
 static uint8_t angleG=0;
 
 
@@ -50,27 +50,27 @@ static void rotate(uint8_t value){
 
 
 static void extend(uint8_t value){
-	angleA1 = servoRead(SERVO_EX);
+	angleEX = servoRead(SERVO_EX);
 	if((value>=90-MARGIN) && (value<=90+MARGIN)){
-		if(angleA2<EXTENSION_MAX_ANGLE)
-			servoWrite(SERVO_EX,(angleA1+ANGLE_GAP));
+		if(angleEX<EXTENSION_MAX_ANGLE)
+			servoWrite(SERVO_EX,(angleEX+ANGLE_GAP));
 		else sendMsg(3);
 	}else if ((value>=270-MARGIN) && (value<=270+MARGIN)){
-		if(angleA2>0)
-			servoWrite(SERVO_EX,(angleA1-ANGLE_GAP));
+		if(angleEX>0)
+			servoWrite(SERVO_EX,(angleEX-ANGLE_GAP));
 		else sendMsg(3);
 	}
 }
 
 static void elevation(uint8_t value){
-	angleA2 = servoRead(SERVO_E);
+	angleE = servoRead(SERVO_E);
 	if((value>=90-MARGIN) && (value<=90+MARGIN)){
-		if(angleA2<ELEVATION_MAX_ANGLE)
-			servoWrite(SERVO_E,(angleA2+ANGLE_GAP));
+		if(angleE<ELEVATION_MAX_ANGLE)
+			servoWrite(SERVO_E,(angleE+ANGLE_GAP));
 		else sendMsg(3);
 	}else if ((value>=270-MARGIN) && (value<=270+MARGIN)){
-		if(angleA2>ELEVATION_MIN_ANGLE)
-			servoWrite(SERVO_E,(angleA2-ANGLE_GAP));
+		if(angleE>ELEVATION_MIN_ANGLE)
+			servoWrite(SERVO_E,(angleE-ANGLE_GAP));
 		else sendMsg(3);
 	}
 
@@ -101,6 +101,17 @@ static void gripper(uint16_t value){
 	}
 }
 
+static void goHome(){
+	angleG = servoRead(SERVO_G);
+	angleR = servoRead(SERVO_R);
+	angleE = servoRead(SERVO_E);
+	angleEX = servoRead(SERVO_EX);
+	if(angleG<=90) gripper(2); //Open full gripper
+
+	//Elevation depends of extension grade
+	//
+}
+
 void armCmd(uint8_t cmd, uint16_t value){
 
 	switch(cmd){
@@ -117,6 +128,7 @@ void armCmd(uint8_t cmd, uint16_t value){
 		gripper(value);
 		break;
 	case HOME:
+		goHome();
 		break;
 	}
 

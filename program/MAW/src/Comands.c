@@ -208,8 +208,6 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 	}
 }
 
-//------------------------------------------------------------------------------------------------
-
 /*
  * armAction(): this function order the arm to execute an action depending cmd,
  * and it according to value1 (angle).
@@ -260,8 +258,7 @@ static void armAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 	}
 
 	if(!aux && strcmp(cmd,"SLL")==0){
-		//GO HOME FUNCTION
-		aux=1;
+		amdCmd(HOME,0);
 	}
 	delay(500);
 
