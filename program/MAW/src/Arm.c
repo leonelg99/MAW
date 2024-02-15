@@ -21,6 +21,7 @@ static void extend(uint8_t);
 static void servosInits(){
 	servoConfig( 0, SERVO_ENABLE );
 	servoConfig( SERVO_R,  SERVO_ENABLE_OUTPUT);
+	servoWrite(SERVO_R,90);
 	servoConfig( SERVO_EX, SERVO_ENABLE_OUTPUT);
 	servoConfig( SERVO_E,  SERVO_ENABLE_OUTPUT);
 	servoConfig( SERVO_G,  SERVO_ENABLE_OUTPUT);
@@ -76,15 +77,15 @@ static void elevation(uint8_t value){
 }
 
 static void gripper(uint16_t value){
+	angleG = servoRead(SERVO_G);
 	if(value < 2){
-		angleG = servoRead(SERVO_G);
 		if(value == 0){
 			if(angleG>0)
-				servoWrite(SERVO_G,angleG+ANGLE_GAP);
+				servoWrite(SERVO_G,angleG-ANGLE_GAP);
 			else sendMsg(12);
 		}else{
 			if(angleG<90)
-				servoWrite(SERVO_G,angleG-ANGLE_GAP);
+				servoWrite(SERVO_G,angleG+ANGLE_GAP);
 			else sendMsg(13);
 		}
 	}else {

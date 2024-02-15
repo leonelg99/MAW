@@ -15,8 +15,8 @@
  * DEADBATERY: the limit from which the battery charge level of the EDU-CIAA is considered
  * extremely low, and can cause bad functions and damage.
  */
-#define LEDSON gpioWrite( ENET_TXD0 , ON );
-#define LEDSOFF gpioWrite( ENET_TXD0 , OFF );
+#define LEDSON gpioWrite( GPIO4 , ON );
+#define LEDSOFF gpioWrite( GPIO4 , OFF );
 #define MARGIN 30
 #define LOWBATERY 		765
 #define WARNINGBATERY 	644
@@ -54,6 +54,7 @@ void programInit(){
 	adcConfig( ADC_ENABLE ); /* ADC */
 	motorsInit();
 	armInit();
+	gpioInit(GPIO4,GPIO_OUTPUT);
 	serialInit();
 	tickWrite(0);
 }
@@ -207,7 +208,6 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 	}
 }
 
-
 /*
  * armAction(): this function order the arm to execute an action depending cmd,
  * and it according to value1 (angle).
@@ -277,7 +277,9 @@ static void stickAction (uint8_t cmd[], uint16_t value1, uint8_t value2){
 		}
 	 }else
 		if(strcmp(cmd,"SL")==0){
-			if(((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))) || ((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))))
-				armCmd(ALTITUDE,value1);
-			}
+			if((value1 >= 90-MARGIN) && (value1 <= 90+MARGIN))
+				armCmd(ALTITUDE,0);
+			else if ((value1 >= 270-MARGIN) && (value1 <= 270+MARGIN))
+				armCmd(ALTITUDE,1);
+		}
 }
