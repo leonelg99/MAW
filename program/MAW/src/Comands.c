@@ -4,9 +4,13 @@
  *  Created on: 13 oct. 2023
  *      Author: lguer
  */
+
+/*==================[inclusions]=============================================*/
+
 #include "../inc/Comands.h"
+
+/*==================[macros and definitions]=================================*/
 /*
- * Private Definitions and Macros
  * LEDSON/LEDSOFF: as their name says are used to turn on/off a couple of leds by
  * turning ON/OFF ENET_TXD0.
  * MARGIN: is literally a margin, a value later used to deal with angles operations.
@@ -15,39 +19,44 @@
  * DEADBATERY: the limit from which the battery charge level of the EDU-CIAA is considered
  * extremely low, and can cause bad functions and damage.
  */
-#define LEDSON gpioWrite( GPIO4 , ON );
-#define LEDSOFF gpioWrite( GPIO4 , OFF );
-#define MARGIN 30
+
+#define LEDSON 			gpioWrite( GPIO4 , ON );
+#define LEDSOFF 		gpioWrite( GPIO4 , OFF );
+#define MARGIN 			30
 #define LOWBATERY 		765
 #define WARNINGBATERY 	644
 #define DEADBATERY 		564
-#define MESSAGE_LONG 30
+#define MESSAGE_LONG 	30
+
+/*=====[Definitions of private global variables]=============================*/
 
 /*
- * Private Variables
  * MODE: indicate in which mode the system is operating. 0 indicates vehicle mode,
  * in this mode we operate the motors to move the vehicle. Mean while with 1, is arm mode
  * in which case, we manage the robotic arm.
  * leds: is a variable used as flag to indicate if the leds are ON or OFF.
  */
+
 static volatile uint8_t MODE=0, leds=0; //VEHICLE MODE
 const char m [] = "Execute\n";
 
+/*==================[internal functions declaration]=========================*/
+
 /*
- * Private Prototype Functions
  * decodeMessage(): this function decode the comand/message/data received by uart
  * motorAction(): This function activates the motors according to the command received
  * and the configuration parameters
  * armAction(): like the previous function, this operates the robotic arm according to
  * the command received and the configuration parameters.
  */
+
 static void decodeMessage(uint8_t [], uint8_t [], uint16_t *, uint8_t *);
 static void motorAction(uint8_t [], uint16_t, uint8_t);
 static void armAction(uint8_t [], uint16_t, uint8_t);
 static void stickAction (uint8_t [], uint16_t , uint8_t);
+
 /*
- * programInit(): this function config and initialize ADC, UART, MotoroShield and system
- * tick.
+ * @brief this function config and initialize ADC, UART, GPIO4, MotoroShield and system tick.
  */
 void programInit(){
 
@@ -60,7 +69,7 @@ void programInit(){
 }
 
 /*
- * checkPower(): this function reads channels 1 and 2 of the ADC, and determinate if the
+ * @brief this function reads channels 1 and 2 of the ADC, and determinate if the
  * EDU-CIAA and/or Motors battery is charge level is low.
  * Depending of the battery level, a message could be send according how low it is.
  * The charge levels are 4, normal, in which case nothing happened, LOW which mean that the charge
@@ -86,13 +95,13 @@ void checkPower(){
 }
 
 /*
- *executeCmd(): this function receive the message previously gotten by UART and process
- *and execute it.
- *The message is processed to obtain 3 values, the command (cmd), value1 and value2
- *(usually angle and speed). Then depending on cmd, it will execute different actions,
- *basically, change of MODE (arm or vehicle), turn off/on the leds, or execute so execute
- *basically, some action through motors or the arm (depending of the MODE) in which cases it will
- *call an specific function for it.
+ * @brief this function receive the message previously gotten by UART and process and execute it.
+ * The message is processed to obtain 3 values, the command (cmd), value1 and value2
+ * (usually angle and speed). Then depending on cmd, it will execute different actions,
+ * basically, change of MODE (arm or vehicle), turn off/on the leds, or execute so execute
+ * basically, some action through motors or the arm (depending of the MODE) in which cases it will
+ * call an specific function for it.
+ * @param msg: the instruccion to execute and it's params.
  */
 uint8_t executeCmd(uint8_t msg[]){
 	uint8_t cmd[7]="";
@@ -135,8 +144,11 @@ uint8_t executeCmd(uint8_t msg[]){
 }
 
 /*
- * decodeMessage(): this function is used to split the message (msg) into 3 variables,
- * cmd, v1, and v2.
+ * @brief this function is used to split the message (msg) into 3 variables, cmd, v1, and v2.
+ * @param cadena: the chain of character to decode.
+ * @param palabra: the first value to get of cadena. It's a chain of character
+ * @param valor1: the second value to get of cadena. It's a number from 0 to 360.
+ * @param valor2: the third and last value to get of cadena. It's a number from 0 to 100.
  */
 static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint16_t *valor1, uint8_t *valor2) {
     // Copiamos la cadena para no modificar la original
@@ -167,8 +179,10 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint16_t *valor1,
     }
 }
 /*
- * motorAction(): this function order the motors to execute an action depending cmd,
- * and it according to value1 and value2 (angle and speed).
+ * @brief this function order the motors to execute an action depending cmd, and it according to value1 and value2 (angle and speed).
+ * @param cmd: the button pressed.
+ * @param value1: the angle value (0 to 360).
+ * @param value2: the position of analog (0 to 100).
  */
 
 static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
@@ -209,9 +223,10 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 }
 
 /*
- * armAction(): this function order the arm to execute an action depending cmd,
- * and it according to value1 (angle).
- * Value 2 is not used since normally is speed value, which has no sense for the arm.
+ * @brief this function order the arm to execute an action depending cmd, and it according to value1 (angle).
+ * @param cmd: the button pressed.
+ * @param value1: the angle value (0 to 360).
+ * @param value2: the position of analog (0 to 100).
  */
 static void armAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 
@@ -264,6 +279,12 @@ static void armAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 
 }
 
+/*
+ * @brief this function englobe the arm actions generated by using the analogs.
+ * @param cmd: the button pressed.
+ * @param value1: the angle value (0 to 360).
+ * @param value2: the position of analog (0 to 100).
+ */
 static void stickAction (uint8_t cmd[], uint16_t value1, uint8_t value2){
 	if(strcmp(cmd,"SR")==0){
 		if ((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))){

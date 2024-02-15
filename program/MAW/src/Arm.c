@@ -13,27 +13,38 @@ static uint8_t angleEX=0;
 static uint8_t angleE=0;
 static uint8_t angleG=0;
 
+/*==================[internal functions declaration]=========================*/
 
 static void servoInits(void);
 static void rotate(uint8_t);
 static void extend(uint8_t);
 
+/*
+ * @brief this function initialize the arm servomotors
+ */
+
 static void servosInits(){
 	servoConfig( 0, SERVO_ENABLE );
 	servoConfig( SERVO_R,  SERVO_ENABLE_OUTPUT);
-	servoWrite(SERVO_R,90);
 	servoConfig( SERVO_EX, SERVO_ENABLE_OUTPUT);
 	servoConfig( SERVO_E,  SERVO_ENABLE_OUTPUT);
 	servoConfig( SERVO_G,  SERVO_ENABLE_OUTPUT);
 
 }
 
+/*
+ * @brief this function initialize the arm servomotors and set them into the correct position.
+ */
 void armInit(){
 	servosInits();
+	servoWrite(SERVO_R,90);
 
 }
 
-
+/*
+ * @brief this function rotate the arm base between 0 and 180 degree
+ * @param value: the angle of rotation used to discern to which side rotate.
+ */
 static void rotate(uint8_t value){
 	angleR = servoRead(SERVO_R);
 	if((value>=180-MARGIN) && (value<=180+MARGIN)){	//LEFT
@@ -48,7 +59,10 @@ static void rotate(uint8_t value){
 
 }
 
-
+/*
+ * @brief this function extends and retracts the arm.
+ * @param value: the angle of rotation used to discern if extend or retract the arm.
+ */
 static void extend(uint8_t value){
 	angleEX = servoRead(SERVO_EX);
 	if((value>=90-MARGIN) && (value<=90+MARGIN)){
@@ -62,6 +76,10 @@ static void extend(uint8_t value){
 	}
 }
 
+/*
+ * @brief this function extends and retracts the arm.
+ * @param value: the angle of rotation used to discern if extend or retract the arm.
+ */
 static void elevation(uint8_t value){
 	angleE = servoRead(SERVO_E);
 	if((value>=90-MARGIN) && (value<=90+MARGIN)){
@@ -76,6 +94,10 @@ static void elevation(uint8_t value){
 
 }
 
+/*
+ * @brief this function open or close the arm gripper.
+ * @param value: a value t discern between close, open, fully close or fully open the gripper.
+ */
 static void gripper(uint16_t value){
 	angleG = servoRead(SERVO_G);
 	if(value < 2){
@@ -101,6 +123,9 @@ static void gripper(uint16_t value){
 	}
 }
 
+/*
+ * @brief this function manage the arm to return to home position based in the actual position of the servomotors.
+ */
 static void goHome(){
 	angleG = servoRead(SERVO_G);
 	angleR = servoRead(SERVO_R);
@@ -112,6 +137,11 @@ static void goHome(){
 	//
 }
 
+/*
+ * @brief this function execute one of the possible actions of the arm based in cmd value.
+ * @param cmd: the value used to discern which action execute.
+ * @param value: a parameter used by the different action.
+ */
 void armCmd(uint8_t cmd, uint16_t value){
 
 	switch(cmd){
