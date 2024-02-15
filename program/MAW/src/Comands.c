@@ -15,8 +15,8 @@
  * DEADBATERY: the limit from which the battery charge level of the EDU-CIAA is considered
  * extremely low, and can cause bad functions and damage.
  */
-#define LEDSON gpioWrite( ENET_TXD0 , ON );
-#define LEDSOFF gpioWrite( ENET_TXD0 , OFF );
+#define LEDSON gpioWrite( GPIO4 , ON );
+#define LEDSOFF gpioWrite( GPIO4 , OFF );
 #define MARGIN 30
 #define LOWBATERY 		765
 #define WARNINGBATERY 	644
@@ -54,6 +54,7 @@ void programInit(){
 	adcConfig( ADC_ENABLE ); /* ADC */
 	motorsInit();
 	armInit();
+	gpioInit(GPIO4,GPIO_OUTPUT);
 	serialInit();
 	tickWrite(0);
 }
@@ -169,35 +170,7 @@ static void decodeMessage(uint8_t cadena[], uint8_t palabra[], uint16_t *valor1,
  * motorAction(): this function order the motors to execute an action depending cmd,
  * and it according to value1 and value2 (angle and speed).
  */
-static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 
-	if((strcmp(cmd,"SR")==0) && (value2!=0)){ //SR STICK RIGHT
-
-		if ((value1>=80) && (value1<=100)){
-			vehicleCmd(FORWARD,value1,value2);
-		}else if((value1>=170) && (value1<=190)){
-			vehicleCmd(ROTATELEFT,value1,value2);
-		}else if((value1>=260) && (value1<=280)){
-			vehicleCmd(BACKWARD,value1,value2);
-		}else if(((value1>=0) && (value1<=10))||((value1>=350)&&(value1<360))){
-			vehicleCmd(ROTATERIGHT,value1,value2);
-		}else if ((value1<80) && (value1>10)){
-			vehicleCmd(TURNRIGHT,value1,value2);
-		}else if((value1>100) && (value1<170)){
-			vehicleCmd(TURNLEFT,value1,value2);
-		}else if((value1>190) && (value1<260)){
-			vehicleCmd(TURNLEFTBACKWARD,value1,value2);
-		}else if(((value1<370) && (value1>280))){
-				vehicleCmd(TURNRIGHTBACKWARD,value1,value2);
-		}
-	}else{
-		if(((value1==0) && (value2==0)) || (strcmp(cmd,"R2")==0)) vehicleCmd(BRAKE,0,0);
-	}
-
-}
-
-//------------------------------------------------------------------------------------------------
-/*
 static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 	if(strcmp(cmd,"R2")==0){
 		vehicleCmd(BRAKE,value1,value2);
@@ -234,7 +207,7 @@ static void motorAction(uint8_t cmd[], uint16_t value1, uint8_t value2){
 		}
 	}
 }
-*/
+
 //------------------------------------------------------------------------------------------------
 
 /*
@@ -307,7 +280,9 @@ static void stickAction (uint8_t cmd[], uint16_t value1, uint8_t value2){
 		}
 	 }else
 		if(strcmp(cmd,"SL")==0){
-			if(((value1>=(90-MARGIN)) && (value1<=(90+MARGIN))) || ((value1>=(270-MARGIN)) && (value1<=(270+MARGIN))))
-				armCmd(ALTITUDE,value1);
-			}
+			if((value1 >= 90-MARGIN) && (value1 <= 90+MARGIN))
+				armCmd(ALTITUDE,0);
+			else if ((value1 >= 270-MARGIN) && (value1 <= 270+MARGIN))
+				armCmd(ALTITUDE,1);
+		}
 }
