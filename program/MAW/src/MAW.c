@@ -1,7 +1,8 @@
 /*=============================================================================
  * Program: MAW
- * Date: 2023/09/07
+ * Date: 2024/02/15
  * Version: 1
+ * Authors: Guerrico Leonel - Ossola Florencia - Perez Balcedo Octavio
  *===========================================================================*/
 
 /*=====[Inclusions of function dependencies]=================================*/
@@ -11,12 +12,10 @@
 #include "../inc/Comands.h"
 #include "../inc/UART.h"
 #include "../inc/MotorShield2.h"
-/*
- * Private Definitions
- */
-#define MESSAGE_LONG 30
 
 /*=====[Definition macros of private constants]==============================*/
+
+#define MESSAGE_LONG 30
 
 /*=====[Definitions of extern global variables]==============================*/
 
@@ -32,8 +31,6 @@
  * one minute check the batteries levels.
  */
 int main( void )
-
-
 {
 
 	 boardConfig();
@@ -46,9 +43,7 @@ int main( void )
 	 gpioInit(GPIO4,GPIO_OUTPUT);
 
 	 while(1){
-		 gpioWrite(LED1,OFF);
 		 if(receiveMsg(msg,MESSAGE_LONG)){
-			gpioWrite(LED1,ON);
 	 		executeCmd(msg);
 	 		uartWriteString( UART, msg);
 	 	 }
@@ -56,7 +51,7 @@ int main( void )
 		 tiempoEnTicks = tickRead();
 
 	 	 if( tiempoEnTicks >= 60 ){
-	 		 //checkPower();
+	 		 checkPower();
 		 	 tickWrite(0);
 		 }
 	     memset(msg,'\0',sizeof(msg));
